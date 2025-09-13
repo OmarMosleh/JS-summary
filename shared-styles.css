@@ -156,3 +156,57 @@ code {
     border-radius: 4px;
     font-weight: 500;
 }
+
+/* Navigation Styles */
+.lecture-nav {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 1rem 2rem;
+    margin: 2rem 0;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.nav-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.nav-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    color: white;
+}
+
+.nav-btn.home {
+    background: rgba(224, 255, 167, 0.8);
+    border-radius: 5px;
+    color: #333;
+}
+
+.nav-btn.home:hover {
+    background: rgb(114, 180, 86);
+    color: #333;
+}
+
+.nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .lecture-nav {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
