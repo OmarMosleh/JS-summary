@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript ES5 Objects - Comprehensive Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-left: 4px solid #007acc;
+            background-color: #f8f9fa;
+        }
+        .code-block {
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .output {
+            background-color: #e8f5e8;
+            border-left: 4px solid #4caf50;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        h1 { color: #333; }
+        h2 { color: #007acc; }
+        h3 { color: #555; }
+    </style>
+</head>
+<body>
+    <h1>JavaScript ES5 Objects - Comprehensive Lecture</h1>
+    
+    <div class="section">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#intro">1. Introduction to Objects</a></li>
+            <li><a href="#creation">2. Object Creation Methods</a></li>
+            <li><a href="#properties">3. Properties and Methods</a></li>
+            <li><a href="#access">4. Accessing Object Members</a></li>
+            <li><a href="#this">5. The 'this' Keyword</a></li>
+            <li><a href="#constructor">6. Constructor Functions</a></li>
+            <li><a href="#prototype">7. Prototype and Inheritance</a></li>
+            <li><a href="#builtin">8. Built-in Object Methods</a></li>
+            <li><a href="#advanced">9. Advanced Object Concepts</a></li>
+        </ul>
+    </div>
+
+    <div class="section" id="intro">
+        <h2>1. Introduction to Objects in JavaScript ES5</h2>
+        <p>Objects are one of the fundamental data types in JavaScript. They are collections of key-value pairs where keys are strings (properties) and values can be any data type including functions (methods).</p>
+        
+        <h3>What is an Object?</h3>
+        <p>An object is a container that stores related data and functionality together. Think of it as a real-world entity with characteristics (properties) and behaviors (methods).</p>
+        
+        <div class="code-block">
+            <pre><code>// Real-world analogy: A car object
+var car = {
+    brand: "Toyota",        // Property
+    model: "Camry",         // Property
+    year: 2020,             // Property
+    start: function() {     // Method
+        console.log("Car is starting...");
+    }
+};
+
+console.log("Car details:", car);
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="creation">
+        <h2>2. Object Creation Methods</h2>
+        
+        <h3>Method 1: Object Literal (Most Common)</h3>
+        <p>The simplest and most common way to create objects in JavaScript.</p>
+        <div class="code-block">
+            <pre><code>var person = {
+    name: "John Doe",
+    age: 30,
+    city: "New York",
+    greet: function() {
+        return "Hello, I'm " + this.name;
+    }
+};
+
+console.log(person.name);     // "John Doe"
+console.log(person.greet());  // "Hello, I'm John Doe"</code></pre>
+        </div>
+        
+        <h3>Method 2: Object() Constructor</h3>
+        <p>Creates an empty object and then adds properties dynamically.</p>
+        <div class="code-block">
+            <pre><code>var student = new Object();
+student.name = "Alice";
+student.grade = "A";
+student.subject = "Math";
+
+// Alternative syntax
+var student2 = Object();  // Same as new Object()
+student2.name = "Bob";</code></pre>
+        </div>
+        
+        <h3>Method 3: Object.create()</h3>
+        <p>Creates a new object with the specified prototype object and properties.</p>
+        <div class="code-block">
+            <pre><code>// Create object with null prototype (no inherited properties)
+var teacher = Object.create(null);
+teacher.name = "Mr. Smith";
+
+// Create object with Object.prototype
+var employee = Object.create(Object.prototype);
+employee.id = 123;</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="properties">
+        <h2>3. Properties and Methods</h2>
+        
+        <h3>Understanding Properties</h3>
+        <p>Properties are key-value pairs that store data in objects. They can contain any JavaScript data type.</p>
+        <div class="code-block">
+            <pre><code>var laptop = {
+    // String property
+    brand: "Dell",
+    
+    // Number property
+    price: 899.99,
+    
+    // Boolean property
+    inStock: true,
+    
+    // Array property
+    features: ["SSD", "8GB RAM", "Intel i5"],
+    
+    // Object property
+    specs: {
+        processor: "Intel i5",
+        memory: "8GB",
+        storage: "256GB SSD"
+    },
+    
+    // Function property (method)
+    getDescription: function() {
+        return this.brand + " laptop - $" + this.price;
+    }
+};</code></pre>
+        </div>
+        
+        <h3>Methods vs Functions</h3>
+        <p>Methods are functions that belong to objects and can access object properties using 'this'.</p>
+        <div class="code-block">
+            <pre><code>var calculator = {
+    result: 0,
+    
+    add: function(number) {
+        this.result += number;
+        return this;  // Method chaining
+    },
+    
+    multiply: function(number) {
+        this.result *= number;
+        return this;
+    },
+    
+    getValue: function() {
+        return this.result;
+    },
+    
+    reset: function() {
+        this.result = 0;
+        return this;
+    }
+};
+
+// Method chaining example
+var result = calculator.add(5).multiply(3).getValue(); // 15</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="access">
+        <h2>4. Accessing Object Members</h2>
+        
+        <h3>Dot Notation</h3>
+        <p>The most common way to access object properties when you know the property name at compile time.</p>
+        <div class="code-block">
+            <pre><code>var book = {
+    title: "1984",
+    author: "George Orwell",
+    pages: 328
+};
+
+console.log(book.title);   // "1984"
+console.log(book.author);  // "George Orwell"</code></pre>
+        </div>
+        
+        <h3>Bracket Notation</h3>
+        <p>Used when property names contain special characters, spaces, or are stored in variables.</p>
+        <div class="code-block">
+            <pre><code>var product = {
+    "product-name": "Smartphone",
+    "unit price": 599.99,
+    "in-stock": true
+};
+
+// Accessing properties with special characters
+console.log(product["product-name"]);  // "Smartphone"
+console.log(product["unit price"]);    // 599.99
+
+// Dynamic property access
+var propertyName = "in-stock";
+console.log(product[propertyName]);    // true</code></pre>
+        </div>
+        
+        <h3>Property Existence Checking</h3>
+        <div class="code-block">
+            <pre><code>var user = {
+    username: "john_doe",
+    email: "john@example.com"
+};
+
+// Using 'in' operator
+console.log("username" in user);     // true
+console.log("password" in user);     // false
+
+// Using hasOwnProperty (checks own properties, not inherited)
+console.log(user.hasOwnProperty("email"));     // true
+console.log(user.hasOwnProperty("toString"));  // false
+
+// Using undefined check
+console.log(user.username !== undefined);  // true
+console.log(user.password !== undefined);  // false</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="this">
+        <h2>5. The 'this' Keyword</h2>
+        
+        <h3>Understanding 'this'</h3>
+        <p>The 'this' keyword refers to the object that is currently executing the function. In object methods, 'this' refers to the object that owns the method.</p>
+        
+        <div class="code-block">
+            <pre><code>var bankAccount = {
+    accountNumber: "123456789",
+    balance: 1000,
+    
+    deposit: function(amount) {
+        if (amount > 0) {
+            this.balance += amount;  // 'this' refers to bankAccount
+            return "Deposited $" + amount + ". New balance: $" + this.balance;
+        }
+        return "Invalid amount";
+    },
+    
+    getAccountInfo: function() {
+        return "Account " + this.accountNumber + " has $" + this.balance;
+    }
+};
+
+console.log(bankAccount.deposit(500));  // Updates bankAccount.balance
+console.log(bankAccount.getAccountInfo());</code></pre>
+        </div>
+        
+        <h3>Common 'this' Pitfalls</h3>
+        <div class="code-block">
+            <pre><code>var counter = {
+    count: 0,
+    increment: function() {
+        this.count++;
+        console.log("Count:", this.count);
+    }
+};
+
+// Direct call - 'this' refers to counter
+counter.increment();  // Count: 1
+
+// Assigning method to variable - 'this' context is lost
+var incrementFunc = counter.increment;
+incrementFunc();      // 'this' might refer to window/global object
+
+// Solution: Using call() or apply()
+incrementFunc.call(counter);  // 'this' explicitly set to counter</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="constructor">
+        <h2>6. Constructor Functions</h2>
+        
+        <h3>Creating Constructor Functions</h3>
+        <p>Constructor functions are regular functions used with the 'new' keyword to create multiple objects with the same structure.</p>
+        
+        <div class="code-block">
+            <pre><code>// Constructor function (note the capital letter convention)
+function Car(brand, model, year) {
+    this.brand = brand;
+    this.model = model;
+    this.year = year;
+    this.mileage = 0;
+    
+    this.drive = function(miles) {
+        this.mileage += miles;
+        return this.brand + " driven " + miles + " miles. Total: " + this.mileage;
+    };
+    
+    this.getAge = function() {
+        var currentYear = new Date().getFullYear();
+        return currentYear - this.year;
+    };
+}
+
+// Creating instances
+var car1 = new Car("Toyota", "Camry", 2019);
+var car2 = new Car("Honda", "Civic", 2021);
+
+console.log(car1.drive(100));  // Toyota driven 100 miles. Total: 100
+console.log(car2.getAge());    // Age based on current year</code></pre>
+        </div>
+        
+        <h3>What Happens with 'new'</h3>
+        <p>When you use 'new' with a constructor function:</p>
+        <ol>
+            <li>A new empty object is created</li>
+            <li>The new object's prototype is set</li>
+            <li>'this' is bound to the new object</li>
+            <li>The constructor function is executed</li>
+            <li>The new object is returned (unless constructor returns an object)</li>
+        </ol>
+        
+        <div class="code-block">
+            <pre><code>// Without 'new' - problematic
+function Person(name) {
+    this.name = name;  // 'this' refers to global object
+}
+
+var person1 = Person("John");  // Don't do this!
+console.log(person1);          // undefined
+console.log(window.name);      // "John" (in browser)
+
+// With 'new' - correct
+var person2 = new Person("Jane");
+console.log(person2.name);     // "Jane"</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="prototype">
+        <h2>7. Prototype and Inheritance</h2>
+        
+        <h3>Understanding Prototype</h3>
+        <p>Every function in JavaScript has a prototype property. When creating objects with constructor functions, the prototype is used to share methods among all instances.</p>
+        
+        <div class="code-block">
+            <pre><code>function Animal(name, species) {
+    this.name = name;
+    this.species = species;
+}
+
+// Adding methods to prototype (shared by all instances)
+Animal.prototype.speak = function() {
+    return this.name + " makes a sound";
+};
+
+Animal.prototype.getInfo = function() {
+    return this.name + " is a " + this.species;
+};
+
+Animal.prototype.isAlive = true;  // Shared property
+
+var dog = new Animal("Buddy", "Dog");
+var cat = new Animal("Whiskers", "Cat");
+
+console.log(dog.speak());     // "Buddy makes a sound"
+console.log(cat.getInfo());   // "Whiskers is a Cat"
+console.log(dog.isAlive);     // true</code></pre>
+        </div>
+        
+        <h3>Prototype vs Instance Properties</h3>
+        <div class="code-block">
+            <pre><code>function Student(name) {
+    this.name = name;           // Instance property
+    this.grades = [];           // Instance property
+}
+
+Student.prototype.school = "Default School";  // Prototype property
+
+Student.prototype.addGrade = function(grade) {
+    this.grades.push(grade);
+};
+
+var student1 = new Student("Alice");
+var student2 = new Student("Bob");
+
+// Instance properties are unique to each object
+student1.addGrade(95);
+student2.addGrade(87);
+
+console.log(student1.grades);  // [95]
+console.log(student2.grades);  // [87]
+
+// Prototype properties are shared
+console.log(student1.school);  // "Default School"
+console.log(student2.school);  // "Default School"
+
+// Changing prototype affects all instances
+Student.prototype.school = "New School";
+console.log(student1.school);  // "New School"
+console.log(student2.school);  // "New School"</code></pre>
+        </div>
+        
+        <h3>Inheritance in ES5</h3>
+        <div class="code-block">
+            <pre><code>// Parent constructor
+function Vehicle(make, model) {
+    this.make = make;
+    this.model = model;
+    this.speed = 0;
+}
+
+Vehicle.prototype.accelerate = function(increment) {
+    this.speed += increment;
+    return this.make + " " + this.model + " speed: " + this.speed + " mph";
+};
+
+Vehicle.prototype.brake = function() {
+    this.speed = 0;
+    return this.make + " " + this.model + " has stopped";
+};
+
+// Child constructor
+function Motorcycle(make, model, engineSize) {
+    Vehicle.call(this, make, model);  // Call parent constructor
+    this.engineSize = engineSize;
+    this.type = "Motorcycle";
+}
+
+// Set up inheritance
+Motorcycle.prototype = Object.create(Vehicle.prototype);
+Motorcycle.prototype.constructor = Motorcycle;
+
+// Override parent method
+Motorcycle.prototype.accelerate = function(increment) {
+    this.speed += increment * 1.5;  // Motorcycles accelerate faster
+    return this.make + " " + this.model + " (motorcycle) speed: " + this.speed + " mph";
+};
+
+// Add new method
+Motorcycle.prototype.wheelie = function() {
+    return this.make + " " + this.model + " is doing a wheelie!";
+};
+
+var bike = new Motorcycle("Harley", "Davidson", "1200cc");
+console.log(bike.accelerate(30));  // Uses overridden method
+console.log(bike.wheelie());       // Uses new method
+console.log(bike.brake());         // Uses inherited method</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="builtin">
+        <h2>8. Built-in Object Methods</h2>
+        
+        <h3>Object.keys()</h3>
+        <p>Returns an array of an object's own enumerable property names.</p>
+        <div class="code-block">
+            <pre><code>var person = {
+    firstName: "John",
+    lastName: "Doe",
+    age: 30
+};
+
+var keys = Object.keys(person);
+console.log(keys);  // ["firstName", "lastName", "age"]</code></pre>
+        </div>
+        
+        <h3>Object.getOwnPropertyNames()</h3>
+        <p>Returns an array of all own properties (enumerable and non-enumerable).</p>
+        <div class="code-block">
+            <pre><code>var obj = {};
+Object.defineProperty(obj, 'hidden', {
+    value: 'secret',
+    enumerable: false
+});
+obj.visible = 'public';
+
+console.log(Object.keys(obj));              // ["visible"]
+console.log(Object.getOwnPropertyNames(obj)); // ["hidden", "visible"]</code></pre>
+        </div>
+        
+        <h3>Object.defineProperty()</h3>
+        <p>Defines a new property or modifies an existing property with specific attributes.</p>
+        <div class="code-block">
+            <pre><code>var product = {};
+
+Object.defineProperty(product, 'price', {
+    value: 99.99,
+    writable: false,     // Cannot be changed
+    enumerable: true,    // Shows up in for...in
+    configurable: false  // Cannot be deleted or reconfigured
+});
+
+console.log(product.price);  // 99.99
+product.price = 149.99;      // Silently fails (strict mode would throw error)
+console.log(product.price);  // Still 99.99</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="advanced">
+        <h2>9. Advanced Object Concepts</h2>
+        
+        <h3>Object Property Descriptors</h3>
+        <p>Every property has a descriptor that defines its behavior.</p>
+        <div class="code-block">
+            <pre><code>var obj = { name: "Test" };
+
+// Get property descriptor
+var descriptor = Object.getOwnPropertyDescriptor(obj, 'name');
+console.log(descriptor);
+// { value: "Test", writable: true, enumerable: true, configurable: true }
+
+// Define property with custom descriptor
+Object.defineProperty(obj, 'id', {
+    value: 123,
+    writable: false,
+    enumerable: false,
+    configurable: false
+});
+
+// Try to modify
+obj.id = 456;           // Fails silently
+console.log(obj.id);    // Still 123
+
+// Check if property is enumerable
+for (var prop in obj) {
+    console.log(prop);  // Only "name" appears, not "id"
+}</code></pre>
+        </div>
+        
+        <h3>Getters and Setters</h3>
+        <div class="code-block">
+            <pre><code>var temperature = {
+    celsius: 0,
+    
+    get fahrenheit() {
+        return (this.celsius * 9/5) + 32;
+    },
+    
+    set fahrenheit(value) {
+        this.celsius = (value - 32) * 5/9;
+    }
+};
+
+temperature.celsius = 25;
+console.log(temperature.fahrenheit);  // 77
+
+temperature.fahrenheit = 86;
+console.log(temperature.celsius);     // 30</code></pre>
+        </div>
+        
+        <h3>Object Sealing and Freezing</h3>
+        <div class="code-block">
+            <pre><code>var obj = { name: "Test", value: 42 };
+
+// Object.seal() - prevents adding/removing properties, allows modification
+Object.seal(obj);
+obj.name = "Modified";    // Works
+obj.newProp = "New";      // Fails silently
+console.log(obj.name);    // "Modified"
+
+var obj2 = { name: "Test", value: 42 };
+
+// Object.freeze() - prevents all changes
+Object.freeze(obj2);
+obj2.name = "Modified";   // Fails silently
+obj2.newProp = "New";     // Fails silently
+console.log(obj2.name);   // Still "Test"
+
+// Check status
+console.log(Object.isSealed(obj));   // true
+console.log(Object.isFrozen(obj2));  // true</code></pre>
+        </div>
+    </div>
+
+    <script>
+        // All JavaScript examples will be demonstrated here
+        console.log("=== JavaScript ES5 Objects Lecture ===\n");
+        
+        // Introduction Example
+        console.log("1. INTRODUCTION TO OBJECTS");
+        console.log("=" .repeat(30));
+        
+        var car = {
+            brand: "Toyota",
+            model: "Camry",
+            year: 2020,
+            start: function() {
+                return "Car is starting...";
+            }
+        };
+        
+        console.log("Car object:", car);
+        console.log("Car brand:", car.brand);
+        console.log("Start method:", car.start());
+        console.log("\n");
+        
+        // Object Creation Methods
+        console.log("2. OBJECT CREATION METHODS");
+        console.log("=" .repeat(30));
+        
+        // Object Literal
+        var person = {
+            name: "John Doe",
+            age: 30,
+            greet: function() {
+                return "Hello, I'm " + this.name;
+            }
+        };
+        
+        console.log("Person:", person);
+        console.log("Greeting:", person.greet());
+        
+        // Object Constructor
+        var student = new Object();
+        student.name = "Alice";
+        student.grade = "A";
+        console.log("Student:", student);
+        
+        // Object.create
+        var teacher = Object.create(null);
+        teacher.name = "Mr. Smith";
+        console.log("Teacher:", teacher);
+        console.log("\n");
+        
+        // Properties and Methods
+        console.log("3. PROPERTIES AND METHODS");
+        console.log("=" .repeat(30));
+        
+        var laptop = {
+            brand: "Dell",
+            price: 899.99,
+            features: ["SSD", "8GB RAM"],
+            getDescription: function() {
+                return this.brand + " laptop - $" + this.price;
+            }
+        };
+        
+        console.log("Laptop description:", laptop.getDescription());
+        console.log("Features:", laptop.features);
+        console.log("\n");
+        
+        // The 'this' keyword
+        console.log("4. THE 'this' KEYWORD");
+        console.log("=" .repeat(30));
+        
+        var bankAccount = {
+            balance: 1000,
+            deposit: function(amount) {
+                this.balance += amount;
+                return "New balance: $" + this.balance;
+            }
+        };
+        
+        console.log("Deposit result:", bankAccount.deposit(500));
+        console.log("Current balance:", bankAccount.balance);
+        console.log("\n");
+        
+        // Constructor Functions
+        console.log("5. CONSTRUCTOR FUNCTIONS");
+        console.log("=" .repeat(30));
+        
+        function Animal(name, species) {
+            this.name = name;
+            this.species = species;
+        }
+        
+        Animal.prototype.speak = function() {
+            return this.name + " makes a sound";
+        };
+        
+        var dog = new Animal("Buddy", "Dog");
+        var cat = new Animal("Whiskers", "Cat");
+        
+        console.log("Dog speaks:", dog.speak());
+        console.log("Cat speaks:", cat.speak());
+        console.log("\n");
+        
+        // For more detailed examples, check the objects-examples.js file
+        console.log("For more comprehensive examples, please check the objects-examples.js file in this project.");
+    </script>
+</body>
+</html>

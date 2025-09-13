@@ -1,0 +1,1638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript ES5 - BOM & DOM Traversal</title>
+    <link rel="stylesheet" href="../shared-styles.css">
+</head>
+<body>
+    <h1>JavaScript ES5 - BOM & DOM Traversal</h1>
+    
+    <div class="section toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#bom-intro">1. BOM Introduction</a></li>
+            <li><a href="#window-object">2. Window Object</a></li>
+            <li><a href="#navigator">3. Navigator Object</a></li>
+            <li><a href="#location">4. Location Object</a></li>
+            <li><a href="#history">5. History Object</a></li>
+            <li><a href="#screen">6. Screen Object</a></li>
+            <li><a href="#timers">7. Timers (setTimeout & setInterval)</a></li>
+            <li><a href="#dom-intro">8. DOM Traversal Introduction</a></li>
+            <li><a href="#nodes">9. Working with Nodes</a></li>
+            <li><a href="#elements">10. childNodes vs children</a></li>
+            <li><a href="#collections">11. Document Collections</a></li>
+        </ul>
+    </div>
+
+    <div class="section" id="bom-intro">
+        <h2>1. BOM (Browser Object Model) Introduction</h2>
+        <p>The Browser Object Model (BOM) provides objects to interact with the browser window and its components. Unlike the DOM, the BOM is not standardized but widely supported.</p>
+        
+        <div class="key-point">
+            The BOM hierarchy starts with the <code>window</code> object, which represents the browser window and serves as the global object in browsers.
+        </div>
+        
+        <h3>BOM Object Hierarchy</h3>
+        <div class="code-block">
+            <pre><code>window
+├── document (DOM)
+├── navigator
+├── location
+├── history
+├── screen
+├── frames[]
+└── parent/self/top
+</code></pre>
+        </div>
+        
+        <div class="info">
+            <strong>Key Features:</strong> The BOM allows you to control browser windows, get browser information, handle navigation, and manage timers.
+        </div>
+    </div>
+
+    <div class="section" id="window-object">
+        <h2>2. Window Object</h2>
+        <p>The <code>window</code> object is the global object in browsers and represents the browser window. All global variables and functions become properties of the window object.</p>
+        
+        <h3>Window Properties and Methods</h3>
+        <div class="code-block">
+            <pre><code>// Window dimensions
+console.log("Inner width:", window.innerWidth);
+console.log("Inner height:", window.innerHeight);
+console.log("Outer width:", window.outerWidth);
+console.log("Outer height:", window.outerHeight);
+
+// Window position
+console.log("Screen X:", window.screenX);
+console.log("Screen Y:", window.screenY);
+
+// Global object access
+var globalVar = "I'm global";
+console.log(window.globalVar);        // "I'm global"
+
+// Window name
+window.name = "myWindow";
+console.log(window.name);             // "myWindow"
+</code></pre>
+        </div>
+        
+        <h3>Opening and Closing Windows</h3>
+        <div class="code-block">
+            <pre><code>// Open new window
+var newWindow = window.open("https://example.com", "popup", 
+    "width=400,height=300,left=100,top=100,resizable=yes");
+
+// Check if window opened successfully
+if (newWindow) {
+    console.log("Window opened successfully");
+    
+    // Close window after 3 seconds
+    setTimeout(function() {
+        newWindow.close();
+        console.log("Window closed");
+    }, 3000);
+} else {
+    console.log("Popup blocked or failed to open");
+}
+
+// Window features string options:
+// width=400,height=300    - Set dimensions
+// left=100,top=100        - Set position
+// resizable=yes/no        - Allow/prevent resizing
+// scrollbars=yes/no       - Show/hide scrollbars
+// toolbar=yes/no          - Show/hide toolbar
+// menubar=yes/no          - Show/hide menubar
+// status=yes/no           - Show/hide status bar
+</code></pre>
+        </div>
+        
+        <h3>Window Focus and Blur</h3>
+        <div class="code-block">
+            <pre><code>// Focus on window
+window.focus();
+
+// Blur (unfocus) window
+window.blur();
+
+// Window focus events
+window.onfocus = function() {
+    console.log("Window gained focus");
+};
+
+window.onblur = function() {
+    console.log("Window lost focus");
+};
+
+// Check if window has focus
+console.log("Has focus:", document.hasFocus());
+</code></pre>
+        </div>
+        
+        <h3>Window Scrolling</h3>
+        <div class="code-block">
+            <pre><code>// Scroll to specific position
+window.scrollTo(0, 100);              // x=0, y=100
+
+// Scroll by relative amount
+window.scrollBy(0, 50);               // scroll down 50 pixels
+
+// Get current scroll position
+console.log("Scroll X:", window.pageXOffset || window.scrollX);
+console.log("Scroll Y:", window.pageYOffset || window.scrollY);
+
+// Smooth scrolling (modern browsers, but can be polyfilled)
+window.scrollTo({
+    top: 100,
+    left: 0,
+    behavior: 'smooth'
+});
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="navigator">
+        <h2>3. Navigator Object</h2>
+        <p>The <code>navigator</code> object contains information about the browser and system. It provides details about the user's environment.</p>
+        
+        <h3>Browser Information</h3>
+        <div class="code-block">
+            <pre><code>// User agent string
+console.log("User Agent:", navigator.userAgent);
+
+// Browser name and version
+console.log("App Name:", navigator.appName);
+console.log("App Version:", navigator.appVersion);
+console.log("App Code Name:", navigator.appCodeName);
+
+// Platform information
+console.log("Platform:", navigator.platform);
+console.log("Language:", navigator.language);
+console.log("Languages:", navigator.languages);
+
+// Cookies enabled
+console.log("Cookies enabled:", navigator.cookieEnabled);
+
+// Java enabled
+console.log("Java enabled:", navigator.javaEnabled());
+</code></pre>
+        </div>
+        
+        <h3>Online/Offline Detection</h3>
+        <div class="code-block">
+            <pre><code>// Check online status
+console.log("Online:", navigator.onLine);
+
+// Listen for online/offline events
+window.addEventListener('online', function() {
+    console.log("Browser is online");
+});
+
+window.addEventListener('offline', function() {
+    console.log("Browser is offline");
+});
+
+// Function to check and display connection status
+function checkConnectionStatus() {
+    if (navigator.onLine) {
+        console.log("You are online");
+        return "online";
+    } else {
+        console.log("You are offline");
+        return "offline";
+    }
+}
+
+// Check status
+var status = checkConnectionStatus();
+</code></pre>
+        </div>
+        
+        <h3>Browser Detection (Use with Caution)</h3>
+        <div class="warning">
+            <strong>Warning:</strong> Browser detection through user agent is unreliable. Feature detection is preferred over browser detection.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// Simple browser detection (not recommended for production)
+function detectBrowser() {
+    var userAgent = navigator.userAgent.toLowerCase();
+    
+    if (userAgent.indexOf('chrome') > -1) {
+        return 'Chrome';
+    } else if (userAgent.indexOf('firefox') > -1) {
+        return 'Firefox';
+    } else if (userAgent.indexOf('safari') > -1) {
+        return 'Safari';
+    } else if (userAgent.indexOf('edge') > -1) {
+        return 'Edge';
+    } else if (userAgent.indexOf('opera') > -1) {
+        return 'Opera';
+    } else {
+        return 'Unknown';
+    }
+}
+
+console.log("Detected browser:", detectBrowser());
+
+// Better approach: Feature detection
+function supportsLocalStorage() {
+    try {
+        return 'localStorage' in window && window.localStorage !== null;
+    } catch (e) {
+        return false;
+    }
+}
+
+console.log("Supports localStorage:", supportsLocalStorage());
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="location">
+        <h2>4. Location Object</h2>
+        <p>The <code>location</code> object contains information about the current URL and provides methods to navigate to new pages.</p>
+        
+        <h3>Location Properties</h3>
+        <div class="code-block">
+            <pre><code>// URL: https://example.com:8080/path/page.html?name=value&test=123#section
+
+// Complete URL
+console.log("href:", location.href);
+// "https://example.com:8080/path/page.html?name=value&test=123#section"
+
+// Protocol
+console.log("protocol:", location.protocol);    // "https:"
+
+// Hostname (without port)
+console.log("hostname:", location.hostname);    // "example.com"
+
+// Host (with port)
+console.log("host:", location.host);            // "example.com:8080"
+
+// Port
+console.log("port:", location.port);            // "8080"
+
+// Pathname
+console.log("pathname:", location.pathname);    // "/path/page.html"
+
+// Search (query string)
+console.log("search:", location.search);        // "?name=value&test=123"
+
+// Hash (fragment)
+console.log("hash:", location.hash);            // "#section"
+
+// Origin (protocol + host)
+console.log("origin:", location.origin);        // "https://example.com:8080"
+</code></pre>
+        </div>
+        
+        <h3>Navigation Methods</h3>
+        <div class="code-block">
+            <pre><code>// Navigate to new page (adds to history)
+// location.href = "https://example.com";
+// location.assign("https://example.com");
+
+// Replace current page (doesn't add to history)
+// location.replace("https://example.com");
+
+// Reload current page
+// location.reload();         // Reload from cache
+// location.reload(true);     // Force reload from server
+
+// Example: Redirect after delay
+function redirectAfterDelay(url, seconds) {
+    console.log("Redirecting to " + url + " in " + seconds + " seconds...");
+    setTimeout(function() {
+        location.href = url;
+    }, seconds * 1000);
+}
+
+// Usage: redirectAfterDelay("https://example.com", 5);
+</code></pre>
+        </div>
+        
+        <h3>Working with Query Parameters</h3>
+        <div class="code-block">
+            <pre><code>// Parse query parameters (ES5 compatible)
+function getQueryParams() {
+    var params = {};
+    var queryString = location.search.substring(1);
+    var pairs = queryString.split('&');
+    
+    for (var i = 0; i < pairs.length; i++) {
+        var pair = pairs[i].split('=');
+        if (pair[0]) {
+            params[decodeURIComponent(pair[0])] = 
+                decodeURIComponent(pair[1] || '');
+        }
+    }
+    
+    return params;
+}
+
+// Get specific parameter
+function getQueryParam(name) {
+    var params = getQueryParams();
+    return params[name] || null;
+}
+
+// Example usage
+var params = getQueryParams();
+console.log("All parameters:", params);
+console.log("Name parameter:", getQueryParam('name'));
+
+// Build query string
+function buildQueryString(params) {
+    var pairs = [];
+    for (var key in params) {
+        if (params.hasOwnProperty(key)) {
+            pairs.push(encodeURIComponent(key) + '=' + 
+                      encodeURIComponent(params[key]));
+        }
+    }
+    return pairs.length > 0 ? '?' + pairs.join('&') : '';
+}
+
+var newParams = { page: 1, size: 10, filter: 'active' };
+console.log("Query string:", buildQueryString(newParams));
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="history">
+        <h2>5. History Object</h2>
+        <p>The <code>history</code> object represents the browser's session history and allows navigation through the history stack.</p>
+        
+        <h3>History Navigation</h3>
+        <div class="code-block">
+            <pre><code>// History length
+console.log("History length:", history.length);
+
+// Navigation methods
+// history.back();         // Go back one page (like browser back button)
+// history.forward();      // Go forward one page (like browser forward button)
+// history.go(-1);         // Go back one page
+// history.go(1);          // Go forward one page
+// history.go(-2);         // Go back two pages
+// history.go(0);          // Reload current page
+
+// Safe navigation with availability check
+function safeHistoryBack() {
+    if (history.length > 1) {
+        history.back();
+    } else {
+        console.log("No previous page in history");
+    }
+}
+
+function safeHistoryForward() {
+    try {
+        history.forward();
+    } catch (e) {
+        console.log("Cannot go forward:", e.message);
+    }
+}
+
+// Example: Navigation with confirmation
+function confirmAndGoBack() {
+    if (confirm("Are you sure you want to go back?")) {
+        history.back();
+    }
+}
+</code></pre>
+        </div>
+        
+        <h3>History State Management (ES5 Compatible)</h3>
+        <div class="info">
+            HTML5 introduced <code>pushState</code> and <code>replaceState</code> for managing history without page reloads. These are supported in modern browsers.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// Check if History API is supported
+function supportsHistoryAPI() {
+    return !!(window.history && window.history.pushState);
+}
+
+if (supportsHistoryAPI()) {
+    // Add new state to history
+    // history.pushState(state, title, url);
+    
+    // Replace current state
+    // history.replaceState(state, title, url);
+    
+    // Listen for popstate events
+    window.addEventListener('popstate', function(event) {
+        console.log("History state changed:", event.state);
+    });
+    
+    // Example: Single Page Application navigation
+    function navigateToPage(pageData, title, url) {
+        if (supportsHistoryAPI()) {
+            history.pushState(pageData, title, url);
+            // Update page content here
+            document.title = title;
+        } else {
+            // Fallback for older browsers
+            location.href = url;
+        }
+    }
+    
+    // Usage example (commented to prevent actual navigation)
+    // navigateToPage({page: 'about'}, 'About Us', '/about');
+}
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="screen">
+        <h2>6. Screen Object</h2>
+        <p>The <code>screen</code> object contains information about the user's screen dimensions and capabilities.</p>
+        
+        <h3>Screen Properties</h3>
+        <div class="code-block">
+            <pre><code>// Screen dimensions
+console.log("Screen width:", screen.width);
+console.log("Screen height:", screen.height);
+
+// Available screen area (excluding taskbars, etc.)
+console.log("Available width:", screen.availWidth);
+console.log("Available height:", screen.availHeight);
+
+// Color depth
+console.log("Color depth:", screen.colorDepth);
+console.log("Pixel depth:", screen.pixelDepth);
+
+// Screen orientation (if supported)
+if (screen.orientation) {
+    console.log("Orientation angle:", screen.orientation.angle);
+    console.log("Orientation type:", screen.orientation.type);
+}
+
+// Display screen info on page
+function displayScreenInfo() {
+    var info = {
+        'Screen Width': screen.width + 'px',
+        'Screen Height': screen.height + 'px',
+        'Available Width': screen.availWidth + 'px',
+        'Available Height': screen.availHeight + 'px',
+        'Color Depth': screen.colorDepth + ' bits',
+        'Pixel Depth': screen.pixelDepth + ' bits'
+    };
+    
+    console.log("Screen Information:", info);
+    return info;
+}
+
+displayScreenInfo();
+</code></pre>
+        </div>
+        
+        <h3>Responsive Design Helpers</h3>
+        <div class="code-block">
+            <pre><code>// Detect screen size categories
+function getScreenCategory() {
+    var width = screen.width;
+    
+    if (width >= 1200) {
+        return 'large';
+    } else if (width >= 768) {
+        return 'medium';
+    } else {
+        return 'small';
+    }
+}
+
+// Check if screen is in landscape or portrait
+function getScreenOrientation() {
+    return screen.width > screen.height ? 'landscape' : 'portrait';
+}
+
+// Calculate screen aspect ratio
+function getAspectRatio() {
+    var ratio = screen.width / screen.height;
+    return Math.round(ratio * 100) / 100;
+}
+
+console.log("Screen category:", getScreenCategory());
+console.log("Orientation:", getScreenOrientation());
+console.log("Aspect ratio:", getAspectRatio());
+
+// Monitor orientation changes (if supported)
+if (screen.orientation) {
+    screen.orientation.addEventListener('change', function() {
+        console.log("Orientation changed to:", screen.orientation.type);
+    });
+}
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="timers">
+        <h2>7. Timers (setTimeout & setInterval)</h2>
+        <p>JavaScript provides two timer functions for executing code after a delay or at regular intervals.</p>
+        
+        <h3>setTimeout - Execute Once After Delay</h3>
+        <div class="code-block">
+            <pre><code>// Basic setTimeout
+var timerId = setTimeout(function() {
+    console.log("This runs after 2 seconds");
+}, 2000);
+
+// setTimeout with parameters (ES5 compatible way)
+function greetUser(name, message) {
+    console.log(message + ", " + name + "!");
+}
+
+// Pass parameters using an anonymous function
+setTimeout(function() {
+    greetUser("Alice", "Hello");
+}, 1000);
+
+// Cancel timeout
+clearTimeout(timerId);
+
+// Example: Delayed page redirect
+function delayedRedirect(url, seconds) {
+    var countdown = seconds;
+    var timerId;
+    
+    function updateCountdown() {
+        console.log("Redirecting in " + countdown + " seconds...");
+        countdown--;
+        
+        if (countdown <= 0) {
+            console.log("Redirecting now...");
+            // location.href = url;
+        } else {
+            timerId = setTimeout(updateCountdown, 1000);
+        }
+    }
+    
+    updateCountdown();
+    
+    // Return function to cancel redirect
+    return function() {
+        clearTimeout(timerId);
+        console.log("Redirect cancelled");
+    };
+}
+
+// Usage: var cancel = delayedRedirect("https://example.com", 5);
+// To cancel: cancel();
+</code></pre>
+        </div>
+        
+        <h3>setInterval - Execute Repeatedly</h3>
+        <div class="code-block">
+            <pre><code>// Basic setInterval
+var intervalId = setInterval(function() {
+    console.log("This runs every 1 second");
+}, 1000);
+
+// Stop interval after some time
+setTimeout(function() {
+    clearInterval(intervalId);
+    console.log("Interval stopped");
+}, 5000);
+
+// Example: Digital clock
+function createDigitalClock() {
+    var clockElement = document.getElementById('clock');
+    
+    function updateTime() {
+        var now = new Date();
+        var timeString = now.getHours() + ':' + 
+                        ('0' + now.getMinutes()).slice(-2) + ':' + 
+                        ('0' + now.getSeconds()).slice(-2);
+        
+        if (clockElement) {
+            clockElement.textContent = timeString;
+        }
+        
+        // Also update page title
+        document.title = "Current Time: " + timeString;
+        
+        console.log("Time updated:", timeString);
+    }
+    
+    // Update immediately
+    updateTime();
+    
+    // Update every second
+    var intervalId = setInterval(updateTime, 1000);
+    
+    // Return stop function
+    return function() {
+        clearInterval(intervalId);
+        console.log("Clock stopped");
+        document.title = "JavaScript ES5 - BOM & DOM Traversal";
+    };
+}
+
+// Example: Countdown timer
+function createCountdown(seconds) {
+    var remaining = seconds;
+    
+    var intervalId = setInterval(function() {
+        console.log("Countdown: " + remaining);
+        remaining--;
+        
+        if (remaining < 0) {
+            clearInterval(intervalId);
+            console.log("Countdown finished!");
+        }
+    }, 1000);
+    
+    return function() {
+        clearInterval(intervalId);
+        console.log("Countdown cancelled");
+    };
+}
+
+// Usage: var stopCountdown = createCountdown(10);
+</code></pre>
+        </div>
+        
+        <h3>Timer Best Practices</h3>
+        <div class="warning">
+            <strong>Important:</strong> Always clear timers when they're no longer needed to prevent memory leaks and unexpected behavior.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// Timer manager for better control
+function TimerManager() {
+    var timers = [];
+    
+    this.setTimeout = function(callback, delay) {
+        var id = setTimeout(function() {
+            callback();
+            // Remove from array when executed
+            var index = timers.indexOf(id);
+            if (index > -1) {
+                timers.splice(index, 1);
+            }
+        }, delay);
+        
+        timers.push(id);
+        return id;
+    };
+    
+    this.setInterval = function(callback, delay) {
+        var id = setInterval(callback, delay);
+        timers.push(id);
+        return id;
+    };
+    
+    this.clear = function(id) {
+        clearTimeout(id);
+        clearInterval(id);
+        var index = timers.indexOf(id);
+        if (index > -1) {
+            timers.splice(index, 1);
+        }
+    };
+    
+    this.clearAll = function() {
+        for (var i = 0; i < timers.length; i++) {
+            clearTimeout(timers[i]);
+            clearInterval(timers[i]);
+        }
+        timers = [];
+    };
+}
+
+// Usage
+var timerManager = new TimerManager();
+var timer1 = timerManager.setTimeout(function() {
+    console.log("Timer 1 executed");
+}, 1000);
+
+var timer2 = timerManager.setInterval(function() {
+    console.log("Timer 2 tick");
+}, 500);
+
+// Clear specific timer
+// timerManager.clear(timer1);
+
+// Clear all timers
+// timerManager.clearAll();
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="dom-intro">
+        <h2>8. DOM Traversal Introduction</h2>
+        <p>The Document Object Model (DOM) represents the HTML document as a tree structure. DOM traversal involves navigating this tree to find and manipulate elements.</p>
+        
+        <h3>DOM Tree Structure</h3>
+        <div class="code-block">
+            <pre><code>document
+└── html (document.documentElement)
+    ├── head
+    │   ├── title
+    │   └── meta
+    └── body
+        ├── h1
+        ├── div
+        │   ├── p
+        │   └── span
+        └── ul
+            ├── li
+            ├── li
+            └── li
+</code></pre>
+        </div>
+        
+        <div class="key-point">
+            Every element in the DOM is a <strong>node</strong>. There are different types of nodes: element nodes, text nodes, comment nodes, etc.
+        </div>
+        
+        <h3>Node Types</h3>
+        <div class="code-block">
+            <pre><code>// Node type constants
+console.log("Element node:", Node.ELEMENT_NODE);           // 1
+console.log("Text node:", Node.TEXT_NODE);                 // 3
+console.log("Comment node:", Node.COMMENT_NODE);           // 8
+console.log("Document node:", Node.DOCUMENT_NODE);         // 9
+
+// Check node type
+function getNodeType(node) {
+    switch (node.nodeType) {
+        case 1: return "Element";
+        case 3: return "Text";
+        case 8: return "Comment";
+        case 9: return "Document";
+        default: return "Other (" + node.nodeType + ")";
+    }
+}
+
+// Example usage
+console.log("Body node type:", getNodeType(document.body));
+</code></pre>
+        </div>
+        
+        <h3>Basic DOM Access</h3>
+        <div class="code-block">
+            <pre><code>// Document references
+console.log("Document:", document);
+console.log("Document Element (html):", document.documentElement);
+console.log("Head:", document.head);
+console.log("Body:", document.body);
+
+// Basic element selection
+var firstDiv = document.getElementsByTagName('div')[0];
+var elementById = document.getElementById('myId');
+var elementsByClass = document.getElementsByClassName('myClass');
+
+// Check if elements exist
+if (firstDiv) {
+    console.log("First div found:", firstDiv);
+}
+
+if (elementById) {
+    console.log("Element with ID found:", elementById);
+}
+
+console.log("Elements with class:", elementsByClass.length);
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="nodes">
+        <h2>9. Working with Nodes</h2>
+        
+        <div class="info-box">
+            <strong>Node vs Element:</strong><br>
+            - Node: Any item in the DOM tree (elements, text, comments)<br>
+            - Element: Only HTML tags (subset of nodes)
+        </div>
+        
+        <h3>Sample HTML Structure</h3>
+        <div class="code-block">
+            <pre><code>&lt;div id="container"&gt;
+    &lt;!-- This is a comment --&gt;
+    &lt;h2&gt;Title&lt;/h2&gt;
+    Some text here
+    &lt;p&gt;Paragraph content&lt;/p&gt;
+    More text
+    &lt;span&gt;Inline element&lt;/span&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+        
+        <h3>Accessing Nodes with childNodes</h3>
+        <div class="code-block">
+            <pre><code>var container = document.getElementById('container');
+
+// childNodes includes ALL nodes: elements, text, and comments
+console.log('Total childNodes:', container.childNodes.length); // Will be 7
+
+// Let's see what each child node is:
+for (var i = 0; i &lt; container.childNodes.length; i++) {
+    var node = container.childNodes[i];
+    console.log('childNodes[' + i + ']:');
+    console.log('  nodeName:', node.nodeName);
+    console.log('  nodeType:', node.nodeType);
+    console.log('  nodeValue:', node.nodeValue);
+}
+
+// Output will be something like:
+// childNodes[0]: nodeName: #text, nodeType: 3, nodeValue: "\n    "
+// childNodes[1]: nodeName: #comment, nodeType: 8, nodeValue: " This is a comment "
+// childNodes[2]: nodeName: #text, nodeType: 3, nodeValue: "\n    "
+// childNodes[3]: nodeName: H2, nodeType: 1, nodeValue: null
+// childNodes[4]: nodeName: #text, nodeType: 3, nodeValue: "\n    Some text here\n    "
+// childNodes[5]: nodeName: P, nodeType: 1, nodeValue: null
+// childNodes[6]: nodeName: #text, nodeType: 3, nodeValue: "\n    More text\n    "
+// childNodes[7]: nodeName: SPAN, nodeType: 1, nodeValue: null</code></pre>
+        </div>
+        
+        <h3>Accessing Elements vs Text Nodes</h3>
+        <div class="code-block">
+            <pre><code>// Access specific types of nodes
+var container = document.getElementById('container');
+
+// Get the comment node (nodeType 8)
+var commentNode = container.childNodes[1];
+console.log('Comment text:', commentNode.nodeValue); // " This is a comment "
+
+// Get the H2 element (nodeType 1)
+var h2Element = container.childNodes[3];
+console.log('H2 tag name:', h2Element.tagName); // "H2"
+console.log('H2 text content:', h2Element.textContent); // "Title"
+
+// Get text node (nodeType 3)
+var textNode = container.childNodes[4];
+console.log('Text content:', textNode.nodeValue); // "\n    Some text here\n    "
+
+// Check node types
+if (h2Element.nodeType === 1) {
+    console.log('This is an element node');
+}
+if (textNode.nodeType === 3) {
+    console.log('This is a text node');
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="elements">
+        <h2>10. childNodes vs children</h2>
+        
+        <h3>The Key Difference</h3>
+        <div class="code-block">
+            <pre><code>var container = document.getElementById('container');
+
+// childNodes: ALL nodes (elements + text + comments)
+console.log('childNodes.length:', container.childNodes.length); // 8
+
+// children: ONLY element nodes
+console.log('children.length:', container.children.length); // 3
+
+// Compare what we get:
+console.log('=== childNodes ===');
+for (var i = 0; i &lt; container.childNodes.length; i++) {
+    console.log(i + ':', container.childNodes[i].nodeName);
+}
+// Output: #text, #comment, #text, H2, #text, P, #text, SPAN
+
+console.log('=== children ===');
+for (var i = 0; i &lt; container.children.length; i++) {
+    console.log(i + ':', container.children[i].tagName);
+}
+// Output: H2, P, SPAN</code></pre>
+        </div>
+        
+        <h3>Practical Access Examples</h3>
+        <div class="code-block">
+            <pre><code>var container = document.getElementById('container');
+
+// Using childNodes - need to find elements manually
+var firstElement;
+for (var i = 0; i &lt; container.childNodes.length; i++) {
+    if (container.childNodes[i].nodeType === 1) {
+        firstElement = container.childNodes[i];
+        break;
+    }
+}
+console.log('First element via childNodes:', firstElement.tagName); // "H2"
+
+// Using children - direct access to elements
+var firstElementDirect = container.children[0];
+console.log('First element via children:', firstElementDirect.tagName); // "H2"
+
+// Access second element
+var secondElement = container.children[1];
+console.log('Second element:', secondElement.tagName); // "P"
+
+// Access last element
+var lastElement = container.children[container.children.length - 1];
+console.log('Last element:', lastElement.tagName); // "SPAN"</code></pre>
+        </div>
+        
+        <h3>First and Last Access</h3>
+        <div class="code-block">
+            <pre><code>var container = document.getElementById('container');
+
+// With nodes (includes text/comments)
+console.log('firstChild:', container.firstChild.nodeName); // "#text"
+console.log('lastChild:', container.lastChild.nodeName); // "#text"
+
+// With elements only
+console.log('firstElementChild:', container.firstElementChild.tagName); // "H2"
+console.log('lastElementChild:', container.lastElementChild.tagName); // "SPAN"</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="collections">
+        <h2>11. Document Collections</h2>
+        
+        <h3>Sample HTML with Collections</h3>
+        <div class="code-block">
+            <pre><code>&lt;!-- Sample page structure --&gt;
+&lt;form name="loginForm"&gt;
+    &lt;input type="text" name="username"&gt;
+    &lt;input type="password" name="password"&gt;
+&lt;/form&gt;
+
+&lt;form name="contactForm"&gt;
+    &lt;input type="email" name="email"&gt;
+&lt;/form&gt;
+
+&lt;img src="logo.png" name="logo"&gt;
+&lt;img src="banner.jpg"&gt;
+
+&lt;a href="page1.html"&gt;Link 1&lt;/a&gt;
+&lt;a href="page2.html"&gt;Link 2&lt;/a&gt;</code></pre>
+        </div>
+        
+        <h3>Forms Collection</h3>
+        <div class="code-block">
+            <pre><code>// Access forms collection
+console.log('Number of forms:', document.forms.length); // 2
+
+// Access by index
+var firstForm = document.forms[0]; // loginForm
+var secondForm = document.forms[1]; // contactForm
+
+// Access by name
+var loginForm = document.forms['loginForm'];
+var contactForm = document.forms['contactForm'];
+
+console.log('First form name:', firstForm.name); // "loginForm"
+console.log('Second form name:', secondForm.name); // "contactForm"</code></pre>
+        </div>
+        
+        <h3>Images Collection</h3>
+        <div class="code-block">
+            <pre><code>// Access images collection
+console.log('Number of images:', document.images.length); // 2
+
+// Access by index
+var firstImage = document.images[0]; // logo.png
+var secondImage = document.images[1]; // banner.jpg
+
+// Access by name (if name attribute exists)
+var logoImage = document.images['logo'];
+
+console.log('First image src:', firstImage.src); // "logo.png"
+console.log('Logo image src:', logoImage.src); // "logo.png"</code></pre>
+        </div>
+        
+        <h3>Links Collection</h3>
+        <div class="code-block">
+            <pre><code>// Access links collection
+console.log('Number of links:', document.links.length); // 2
+
+// Access by index
+var firstLink = document.links[0];
+var secondLink = document.links[1];
+
+console.log('First link href:', firstLink.href); // "page1.html"
+console.log('First link text:', firstLink.textContent); // "Link 1"
+console.log('Second link href:', secondLink.href); // "page2.html"</code></pre>
+        </div>
+        
+        <h3>Form Elements Collection</h3>
+        <div class="code-block">
+            <pre><code>// Get form elements
+var loginForm = document.forms['loginForm'];
+console.log('Login form elements:', loginForm.elements.length); // 2
+
+// Access form elements by index
+var usernameField = loginForm.elements[0];
+var passwordField = loginForm.elements[1];
+
+// Access form elements by name
+var usernameByName = loginForm.elements['username'];
+var passwordByName = loginForm.elements['password'];
+
+console.log('Username field type:', usernameField.type); // "text"
+console.log('Password field type:', passwordField.type); // "password"
+
+// Set values
+usernameField.value = "john";
+passwordField.value = "secret";
+
+console.log('Username value:', loginForm.elements['username'].value); // "john"</code></pre>
+        </div>
+        
+        <h2 id="practical-examples">12. Simple Traversal Examples</h2>
+        
+        <h3>Basic Page Analysis</h3>
+        <div class="code-block">
+            <pre><code>// Count different types of content
+function simplePageAnalysis() {
+    console.log('=== Page Summary ===');
+    console.log('Forms:', document.forms.length);
+    console.log('Images:', document.images.length);
+    console.log('Links:', document.links.length);
+    
+    // Look at body children
+    console.log('Body has', document.body.children.length, 'element children');
+    console.log('Body has', document.body.childNodes.length, 'total child nodes');
+}
+
+simplePageAnalysis();</code></pre>
+        </div>
+        
+        <h3>Loop Through Collections</h3>
+        <div class="code-block">
+            <pre><code>// Simple loops through collections
+console.log('=== All Forms ===');
+for (var i = 0; i &lt; document.forms.length; i++) {
+    var form = document.forms[i];
+    console.log('Form ' + i + ':', form.name);
+}
+
+console.log('=== All Images ===');
+for (var i = 0; i &lt; document.images.length; i++) {
+    var img = document.images[i];
+    console.log('Image ' + i + ':', img.src);
+}
+
+console.log('=== All Links ===');
+for (var i = 0; i &lt; document.links.length; i++) {
+    var link = document.links[i];
+    console.log('Link ' + i + ':', link.href);
+}</code></pre>
+        </div>
+        
+        <h3>Node Properties</h3>
+        <div class="code-block">
+            <pre><code>// Node properties
+function analyzeNode(node) {
+    if (!node) return;
+    
+    console.log("Node analysis:");
+    console.log("  nodeName:", node.nodeName);
+    console.log("  nodeType:", node.nodeType);
+    console.log("  nodeValue:", node.nodeValue);
+    
+    if (node.nodeType === 1) { // Element node
+        console.log("  tagName:", node.tagName);
+        console.log("  id:", node.id);
+        console.log("  className:", node.className);
+    }
+    
+    if (node.nodeType === 3) { // Text node
+        console.log("  textContent:", node.textContent);
+    }
+}
+
+// Analyze different nodes
+analyzeNode(document.body);
+analyzeNode(document.body.firstChild);
+</code></pre>
+        </div>
+        
+        <h3>Node Traversal Properties</h3>
+        <div class="code-block">
+            <pre><code>// Parent-child relationships
+function exploreNodeRelations(node) {
+    if (!node) return;
+    
+    console.log("Node relations for:", node.nodeName);
+    
+    // Parent
+    console.log("  parentNode:", node.parentNode ? node.parentNode.nodeName : null);
+    
+    // Children (includes all node types)
+    console.log("  childNodes count:", node.childNodes.length);
+    console.log("  firstChild:", node.firstChild ? node.firstChild.nodeName : null);
+    console.log("  lastChild:", node.lastChild ? node.lastChild.nodeName : null);
+    
+    // Siblings
+    console.log("  previousSibling:", node.previousSibling ? node.previousSibling.nodeName : null);
+    console.log("  nextSibling:", node.nextSibling ? node.nextSibling.nodeName : null);
+}
+
+// Example: Explore body relations
+exploreNodeRelations(document.body);
+</code></pre>
+        </div>
+        
+        <h3>Iterating Through Child Nodes</h3>
+        <div class="code-block">
+            <pre><code>// Iterate through all child nodes
+function logAllChildNodes(parent) {
+    if (!parent || !parent.childNodes) return;
+    
+    console.log("Child nodes of", parent.nodeName + ":");
+    
+    for (var i = 0; i < parent.childNodes.length; i++) {
+        var child = parent.childNodes[i];
+        console.log("  " + i + ":", getNodeType(child), 
+                   "'" + child.nodeName + "'", 
+                   child.nodeValue ? "'" + child.nodeValue.trim() + "'" : "");
+    }
+}
+
+// Filter only element nodes
+function logElementNodes(parent) {
+    if (!parent || !parent.childNodes) return;
+    
+    console.log("Element nodes of", parent.nodeName + ":");
+    
+    for (var i = 0; i < parent.childNodes.length; i++) {
+        var child = parent.childNodes[i];
+        if (child.nodeType === 1) { // Element node
+            console.log("  Element:", child.tagName, 
+                       child.id ? "#" + child.id : "",
+                       child.className ? "." + child.className : "");
+        }
+    }
+}
+
+// Usage examples
+logAllChildNodes(document.body);
+logElementNodes(document.body);
+</code></pre>
+        </div>
+        
+        <h3>Node Navigation Functions</h3>
+        <div class="code-block">
+            <pre><code>// Get next element sibling (skipping text nodes)
+function getNextElementSibling(node) {
+    var sibling = node.nextSibling;
+    while (sibling && sibling.nodeType !== 1) {
+        sibling = sibling.nextSibling;
+    }
+    return sibling;
+}
+
+// Get previous element sibling
+function getPreviousElementSibling(node) {
+    var sibling = node.previousSibling;
+    while (sibling && sibling.nodeType !== 1) {
+        sibling = sibling.previousSibling;
+    }
+    return sibling;
+}
+
+// Get first element child
+function getFirstElementChild(parent) {
+    var child = parent.firstChild;
+    while (child && child.nodeType !== 1) {
+        child = child.nextSibling;
+    }
+    return child;
+}
+
+// Get last element child
+function getLastElementChild(parent) {
+    var child = parent.lastChild;
+    while (child && child.nodeType !== 1) {
+        child = child.previousSibling;
+    }
+    return child;
+}
+
+// Count element children
+function countElementChildren(parent) {
+    var count = 0;
+    var child = parent.firstChild;
+    
+    while (child) {
+        if (child.nodeType === 1) {
+            count++;
+        }
+        child = child.nextSibling;
+    }
+    
+    return count;
+}
+
+// Example usage
+var firstDiv = document.getElementsByTagName('div')[0];
+if (firstDiv) {
+    console.log("First element child:", getFirstElementChild(firstDiv));
+    console.log("Element children count:", countElementChildren(firstDiv));
+}
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="elements">
+        <h2>10. Working with Elements</h2>
+        <p>Elements are a special type of node that represent HTML tags. Modern browsers provide element-specific traversal properties.</p>
+        
+        <h3>Element Traversal Properties</h3>
+        <div class="info">
+            These properties skip text and comment nodes, focusing only on element nodes.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// Element-only traversal (IE9+, but widely supported)
+function exploreElementRelations(element) {
+    if (!element || element.nodeType !== 1) return;
+    
+    console.log("Element relations for:", element.tagName);
+    
+    // Parent element
+    console.log("  parentElement:", element.parentElement ? element.parentElement.tagName : null);
+    
+    // Children elements only
+    console.log("  children count:", element.children.length);
+    console.log("  firstElementChild:", element.firstElementChild ? element.firstElementChild.tagName : null);
+    console.log("  lastElementChild:", element.lastElementChild ? element.lastElementChild.tagName : null);
+    
+    // Element siblings
+    console.log("  previousElementSibling:", element.previousElementSibling ? element.previousElementSibling.tagName : null);
+    console.log("  nextElementSibling:", element.nextElementSibling ? element.nextElementSibling.tagName : null);
+    
+    // Child element count
+    console.log("  childElementCount:", element.childElementCount);
+}
+
+// Compare with node traversal
+function compareNodeVsElement(element) {
+    if (!element || element.nodeType !== 1) return;
+    
+    console.log("Comparison for", element.tagName + ":");
+    console.log("  childNodes.length:", element.childNodes.length);
+    console.log("  children.length:", element.children.length);
+    console.log("  firstChild:", element.firstChild ? element.firstChild.nodeName : null);
+    console.log("  firstElementChild:", element.firstElementChild ? element.firstElementChild.tagName : null);
+}
+
+// Usage
+var body = document.body;
+exploreElementRelations(body);
+compareNodeVsElement(body);
+</code></pre>
+        </div>
+        
+        <h3>Element Collection Iteration</h3>
+        <div class="code-block">
+            <pre><code>// Iterate through children elements
+function logChildElements(parent) {
+    if (!parent || !parent.children) return;
+    
+    console.log("Child elements of", parent.tagName + ":");
+    
+    for (var i = 0; i < parent.children.length; i++) {
+        var child = parent.children[i];
+        console.log("  " + i + ":", child.tagName,
+                   child.id ? "#" + child.id : "",
+                   child.className ? "." + child.className : "");
+    }
+}
+
+// Get all element descendants by tag name
+function logElementsByTag(parent, tagName) {
+    var elements = parent.getElementsByTagName(tagName);
+    console.log(tagName.toUpperCase() + " elements in", parent.tagName + ":");
+    
+    for (var i = 0; i < elements.length; i++) {
+        console.log("  " + i + ":", elements[i].outerHTML.substring(0, 50) + "...");
+    }
+}
+
+// Find elements by class
+function logElementsByClass(parent, className) {
+    var elements = parent.getElementsByClassName(className);
+    console.log("Elements with class '" + className + "':");
+    
+    for (var i = 0; i < elements.length; i++) {
+        console.log("  " + i + ":", elements[i].tagName, elements[i].id || "(no id)");
+    }
+}
+
+// Usage examples
+logChildElements(document.body);
+logElementsByTag(document.body, 'div');
+logElementsByClass(document.body, 'section');
+</code></pre>
+        </div>
+        
+        <h3>Element Tree Walking</h3>
+        <div class="code-block">
+            <pre><code>// Walk through all descendant elements
+function walkElementTree(element, callback, depth) {
+    depth = depth || 0;
+    
+    if (element.nodeType === 1) {
+        callback(element, depth);
+        
+        for (var i = 0; i < element.children.length; i++) {
+            walkElementTree(element.children[i], callback, depth + 1);
+        }
+    }
+}
+
+// Get all sibling elements
+function getAllSiblings(element) {
+    var siblings = [];
+    var parent = element.parentElement;
+    
+    if (parent) {
+        for (var i = 0; i < parent.children.length; i++) {
+            var sibling = parent.children[i];
+            if (sibling !== element) {
+                siblings.push(sibling);
+            }
+        }
+    }
+    
+    return siblings;
+}
+
+// Find ancestor by tag name
+function findAncestorByTag(element, tagName) {
+    var current = element.parentElement;
+    tagName = tagName.toLowerCase();
+    
+    while (current) {
+        if (current.tagName.toLowerCase() === tagName) {
+            return current;
+        }
+        current = current.parentElement;
+    }
+    
+    return null;
+}
+
+// Example usage
+walkElementTree(document.body, function(element, depth) {
+    var indent = "  ".repeat(depth);
+    console.log(indent + element.tagName + 
+               (element.id ? "#" + element.id : "") +
+               (element.className ? "." + element.className.replace(/\s+/g, ".") : ""));
+});
+
+// Find all siblings of first div
+var firstDiv = document.getElementsByTagName('div')[0];
+if (firstDiv) {
+    var siblings = getAllSiblings(firstDiv);
+    console.log("Siblings of first div:", siblings.map(function(s) { return s.tagName; }));
+}
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="collections">
+        <h2>11. DOM Collections</h2>
+        <p>DOM collections are array-like objects that contain groups of nodes or elements. They are live collections that update automatically when the DOM changes.</p>
+        
+        <h3>HTMLCollection vs NodeList</h3>
+        <div class="key-point">
+            <code>HTMLCollection</code> contains only elements, while <code>NodeList</code> can contain any type of node.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// HTMLCollection examples
+var divs = document.getElementsByTagName('div');        // HTMLCollection
+var byClass = document.getElementsByClassName('test');  // HTMLCollection
+var forms = document.forms;                             // HTMLCollection
+var images = document.images;                           // HTMLCollection
+var links = document.links;                             // HTMLCollection
+
+// NodeList examples
+var allNodes = document.querySelectorAll('div');        // Static NodeList
+var childNodes = document.body.childNodes;              // Live NodeList
+
+console.log("Divs collection type:", divs.constructor.name);
+console.log("Query result type:", allNodes.constructor.name);
+
+// Check if collection is live
+function isLiveCollection(collection) {
+    var originalLength = collection.length;
+    
+    // Try to add an element (this is just a test concept)
+    console.log("Original length:", originalLength);
+    
+    // Live collections update automatically when DOM changes
+    // Static collections (like querySelectorAll results) don't
+    return "Live collections update when DOM changes";
+}
+</code></pre>
+        </div>
+        
+        <h3>Working with Collections</h3>
+        <div class="code-block">
+            <pre><code>// Convert collection to array (ES5 compatible)
+function collectionToArray(collection) {
+    var array = [];
+    for (var i = 0; i < collection.length; i++) {
+        array.push(collection[i]);
+    }
+    return array;
+}
+
+// Alternative using Array.prototype.slice
+function collectionToArraySlice(collection) {
+    return Array.prototype.slice.call(collection);
+}
+
+// Iterate through collection
+function forEachInCollection(collection, callback) {
+    for (var i = 0; i < collection.length; i++) {
+        callback(collection[i], i, collection);
+    }
+}
+
+// Filter collection
+function filterCollection(collection, predicate) {
+    var result = [];
+    for (var i = 0; i < collection.length; i++) {
+        if (predicate(collection[i], i)) {
+            result.push(collection[i]);
+        }
+    }
+    return result;
+}
+
+// Examples
+var allDivs = document.getElementsByTagName('div');
+
+// Convert to array
+var divArray = collectionToArray(allDivs);
+console.log("Div array:", divArray);
+
+// Iterate through collection
+forEachInCollection(allDivs, function(div, index) {
+    console.log("Div " + index + ":", div.id || "(no id)");
+});
+
+// Filter collection
+var divsWithId = filterCollection(allDivs, function(div) {
+    return div.id !== "";
+});
+console.log("Divs with ID:", divsWithId.length);
+</code></pre>
+        </div>
+        
+        <h3>Document Collections</h3>
+        <div class="code-block">
+            <pre><code>// Document-level collections
+function exploreDocumentCollections() {
+    console.log("Document Collections:");
+    
+    // Forms collection
+    console.log("  Forms:", document.forms.length);
+    for (var i = 0; i < document.forms.length; i++) {
+        var form = document.forms[i];
+        console.log("    Form " + i + ":", form.name || form.id || "(unnamed)");
+    }
+    
+    // Images collection
+    console.log("  Images:", document.images.length);
+    for (var i = 0; i < document.images.length; i++) {
+        var img = document.images[i];
+        console.log("    Image " + i + ":", img.src.substring(img.src.lastIndexOf('/') + 1));
+    }
+    
+    // Links collection (a and area elements with href)
+    console.log("  Links:", document.links.length);
+    for (var i = 0; i < document.links.length; i++) {
+        var link = document.links[i];
+        console.log("    Link " + i + ":", link.href);
+    }
+    
+    // Anchors collection (a elements with name)
+    console.log("  Anchors:", document.anchors.length);
+    for (var i = 0; i < document.anchors.length; i++) {
+        var anchor = document.anchors[i];
+        console.log("    Anchor " + i + ":", anchor.name);
+    }
+}
+
+exploreDocumentCollections();
+</code></pre>
+        </div>
+        
+        <h3>Form Elements Collection</h3>
+        <div class="code-block">
+            <pre><code>// Working with form elements
+function analyzeForm(form) {
+    if (!form) return;
+    
+    console.log("Form analysis:", form.name || form.id || "(unnamed)");
+    console.log("  Elements count:", form.elements.length);
+    
+    // Iterate through form elements
+    for (var i = 0; i < form.elements.length; i++) {
+        var element = form.elements[i];
+        console.log("    " + i + ":", element.type, element.name, 
+                   "value: '" + element.value + "'");
+    }
+    
+    // Access by name
+    if (form.elements.username) {
+        console.log("  Username field:", form.elements.username.value);
+    }
+    
+    // Access by index
+    if (form.elements[0]) {
+        console.log("  First element:", form.elements[0].name);
+    }
+}
+
+// Get form data as object
+function getFormData(form) {
+    var data = {};
+    
+    for (var i = 0; i < form.elements.length; i++) {
+        var element = form.elements[i];
+        
+        if (element.name && element.type !== 'submit' && element.type !== 'button') {
+            if (element.type === 'checkbox' || element.type === 'radio') {
+                if (element.checked) {
+                    data[element.name] = element.value;
+                }
+            } else {
+                data[element.name] = element.value;
+            }
+        }
+    }
+    
+    return data;
+}
+
+// Disable all form elements
+function disableForm(form) {
+    for (var i = 0; i < form.elements.length; i++) {
+        form.elements[i].disabled = true;
+    }
+}
+
+// Enable all form elements
+function enableForm(form) {
+    for (var i = 0; i < form.elements.length; i++) {
+        form.elements[i].disabled = false;
+    }
+}
+
+// Usage example
+var firstForm = document.forms[0];
+if (firstForm) {
+    analyzeForm(firstForm);
+    
+    var formData = getFormData(firstForm);
+    console.log("Form data:", formData);
+}
+</code></pre>
+        </div>
+    </div>
+
+    <!-- Sample content for DOM traversal examples -->
+    <div class="section" style="display: none;">
+        <h2>Sample Content for Testing</h2>
+        <ul id="test-list">
+            <li>Item 1</li>
+            <li>Item 2</li>
+            <li>Item 3</li>
+        </ul>
+        
+        <form name="testForm">
+            <input type="text" name="username" value="test">
+            <input type="email" name="email" value="test@example.com">
+            <input type="checkbox" name="subscribe" checked>
+            <button type="submit">Submit</button>
+        </form>
+        
+        <div id="clock">00:00:00</div>
+        <div id="screen-info"></div>
+    </div>
+
+    <div class="section">
+        <h2>Practice Exercises</h2>
+        <p>Try these exercises to reinforce your understanding:</p>
+        <ol>
+            <li>Create a function that opens a popup window with custom dimensions and closes it automatically</li>
+            <li>Build a clock that updates the page title every second</li>
+            <li>Create a form validator that traverses all form elements and checks their values</li>
+            <li>Build a navigation system using the History API</li>
+            <li>Create a responsive design helper that uses screen information</li>
+            <li>Write a DOM tree visualizer that shows the complete element hierarchy</li>
+        </ol>
+        
+        <div class="info">
+            <strong>Next Steps:</strong> Practice these concepts by building interactive web applications that respond to user actions and browser events.
+        </div>
+    </div>
+
+    <script src="bom-dom-traversal.js"></script>
+</body>
+</html>

@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript ES5 - Strings, Arrays, Date & Math</title>
+    <link rel="stylesheet" href="../shared-styles.css">
+</head>
+<body>
+    <h1>JavaScript ES5 - Strings, Arrays, Date & Math</h1>
+    
+    <div class="section toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#strings">1. String Methods</a></li>
+            <li><a href="#arrays">2. Arrays in JavaScript</a></li>
+            <li><a href="#array-methods">3. Array Methods (Mutating vs Non-Mutating)</a></li>
+            <li><a href="#date">4. Date Object</a></li>
+            <li><a href="#math">5. Math Object</a></li>
+        </ul>
+    </div>
+
+    <div class="section" id="strings">
+        <h2>1. String Methods</h2>
+        <p>Strings in JavaScript are immutable, meaning string methods create new strings rather than modifying the original.</p>
+        
+        <h3>String Extraction Methods</h3>
+        <div class="key-point">
+            Three main methods for extracting parts of strings: <code>substring()</code>, <code>substr()</code>, and <code>slice()</code>
+        </div>
+        
+        <h4>substring(start, end)</h4>
+        <div class="info">
+            Extracts characters between two specified indices. Negative values are treated as 0.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>var text = "JavaScript ES5";
+console.log(text.substring(0, 4));    // "Java"
+console.log(text.substring(4, 10));   // "Script"
+console.log(text.substring(4));       // "Script ES5" (from index 4 to end)
+
+// If start > end, they are swapped
+console.log(text.substring(10, 4));   // "Script" (same as substring(4, 10))
+
+// Negative values treated as 0
+console.log(text.substring(-3, 4));   // "Java" (same as substring(0, 4))
+console.log(text.substring(4, -1));   // "Java" (same as substring(0, 4))
+</code></pre>
+        </div>
+        
+        <h4>substr(start, length)</h4>
+        <div class="warning">
+            <strong>Deprecated:</strong> substr() is deprecated but still widely supported. Use substring() or slice() instead.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>var text = "JavaScript ES5";
+console.log(text.substr(0, 4));       // "Java"
+console.log(text.substr(4, 6));       // "Script"
+console.log(text.substr(4));          // "Script ES5" (from index 4 to end)
+
+// Negative start counts from end
+console.log(text.substr(-3, 2));      // "ES" (3 from end, length 2)
+console.log(text.substr(-3));         // "ES5" (from 3rd from end to end)
+</code></pre>
+        </div>
+        
+        <h4>slice(start, end)</h4>
+        <div class="info">
+            Similar to substring() but can handle negative indices properly.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>var text = "JavaScript ES5";
+console.log(text.slice(0, 4));        // "Java"
+console.log(text.slice(4, 10));       // "Script"
+console.log(text.slice(4));           // "Script ES5" (from index 4 to end)
+
+// Negative indices count from end
+console.log(text.slice(-3));          // "ES5" (last 3 characters)
+console.log(text.slice(0, -4));       // "JavaScript" (all except last 4)
+console.log(text.slice(-10, -4));     // "Script" (from 10th from end to 4th from end)
+</code></pre>
+        </div>
+        
+        <h3>Other Important String Methods</h3>
+        
+        <h4>Search and Position Methods</h4>
+        <div class="code-block">
+            <pre><code>var text = "Hello World Hello";
+
+// indexOf() - first occurrence
+console.log(text.indexOf("Hello"));      // 0
+console.log(text.indexOf("World"));      // 6
+console.log(text.indexOf("Hello", 1));   // 12 (start search from index 1)
+console.log(text.indexOf("xyz"));        // -1 (not found)
+
+// lastIndexOf() - last occurrence
+console.log(text.lastIndexOf("Hello"));  // 12
+console.log(text.lastIndexOf("l"));      // 15
+
+// charAt() - character at index
+console.log(text.charAt(0));             // "H"
+console.log(text.charAt(6));             // "W"
+console.log(text.charAt(100));           // "" (empty string for out of bounds)
+
+// charCodeAt() - character code
+console.log(text.charCodeAt(0));         // 72 (ASCII code for 'H')
+console.log(text.charCodeAt(6));         // 87 (ASCII code for 'W')
+</code></pre>
+        </div>
+        
+        <h4>Case Conversion Methods</h4>
+        <div class="code-block">
+            <pre><code>var text = "JavaScript ES5";
+
+console.log(text.toLowerCase());         // "javascript es5"
+console.log(text.toUpperCase());         // "JAVASCRIPT ES5"
+
+// Original string remains unchanged
+console.log(text);                       // "JavaScript ES5"
+</code></pre>
+        </div>
+        
+        <h4>Trim and Replace Methods</h4>
+        <div class="code-block">
+            <pre><code>var text = "  Hello World  ";
+var message = "Hello World Hello";
+
+// trim() - remove whitespace from both ends (ES5)
+console.log(text.trim());                // "Hello World"
+console.log(text.trim().length);         // 11
+
+// replace() - replace first occurrence
+console.log(message.replace("Hello", "Hi"));     // "Hi World Hello"
+console.log(message.replace(/Hello/g, "Hi"));    // "Hi World Hi" (global replace with regex)
+
+// split() - convert string to array
+var csv = "apple,banana,orange";
+console.log(csv.split(","));             // ["apple", "banana", "orange"]
+console.log("Hello World".split(" "));   // ["Hello", "World"]
+console.log("Hello".split(""));          // ["H", "e", "l", "l", "o"]
+</code></pre>
+        </div>
+        
+        <h4>Concatenation Methods</h4>
+        <div class="code-block">
+            <pre><code>var first = "Hello";
+var second = "World";
+
+// concat() method
+console.log(first.concat(" ", second));  // "Hello World"
+console.log(first.concat(" ", second, "!")); // "Hello World!"
+
+// + operator (more common)
+console.log(first + " " + second);       // "Hello World"
+
+// Original strings unchanged
+console.log(first);                      // "Hello"
+console.log(second);                     // "World"
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="arrays">
+        <h2>2. Arrays in JavaScript</h2>
+        <p>Arrays are ordered collections of items that can hold any data type. In JavaScript, arrays are actually objects with special behavior.</p>
+        
+        <h3>Array Creation</h3>
+        <div class="code-block">
+            <pre><code>// Array literal (recommended)
+var fruits = ["apple", "banana", "orange"];
+var numbers = [1, 2, 3, 4, 5];
+var mixed = ["hello", 42, true, null, undefined];
+
+// Array constructor
+var arr1 = new Array();              // Empty array
+var arr2 = new Array(5);             // Array with 5 empty slots
+var arr3 = new Array(1, 2, 3);       // Array with elements [1, 2, 3]
+
+console.log(fruits);                 // ["apple", "banana", "orange"]
+console.log(numbers.length);         // 5
+console.log(mixed[1]);               // 42
+</code></pre>
+        </div>
+        
+        <h3>Array Properties and Basic Operations</h3>
+        <div class="code-block">
+            <pre><code>var colors = ["red", "green", "blue"];
+
+// Length property
+console.log(colors.length);          // 3
+
+// Accessing elements
+console.log(colors[0]);              // "red"
+console.log(colors[1]);              // "green"
+console.log(colors[2]);              // "blue"
+console.log(colors[3]);              // undefined
+
+// Modifying elements
+colors[1] = "yellow";
+console.log(colors);                 // ["red", "yellow", "blue"]
+
+// Adding elements
+colors[3] = "purple";
+console.log(colors);                 // ["red", "yellow", "blue", "purple"]
+
+// Setting length property
+colors.length = 2;
+console.log(colors);                 // ["red", "yellow"] (truncated)
+
+// Arrays are objects
+console.log(typeof colors);          // "object"
+console.log(Array.isArray(colors));  // true
+</code></pre>
+        </div>
+        
+        <h3>Iterating Through Arrays</h3>
+        <div class="code-block">
+            <pre><code>var fruits = ["apple", "banana", "orange"];
+
+// for loop (most common)
+for (var i = 0; i < fruits.length; i++) {
+    console.log(i + ": " + fruits[i]);
+}
+
+// for...in loop (iterates over indices)
+for (var index in fruits) {
+    console.log(index + ": " + fruits[index]);
+}
+
+// while loop
+var j = 0;
+while (j < fruits.length) {
+    console.log(fruits[j]);
+    j++;
+}
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="array-methods">
+        <h2>3. Array Methods (Mutating vs Non-Mutating)</h2>
+        
+        <div class="key-point">
+            Array methods are categorized into two types: those that modify the original array (mutating) and those that return a new array (non-mutating).
+        </div>
+        
+        <h3>Mutating Methods (Modify Original Array)</h3>
+        
+        <h4>Adding and Removing Elements</h4>
+        <div class="code-block">
+            <pre><code>var fruits = ["apple", "banana"];
+
+// push() - add to end, returns new length
+var newLength = fruits.push("orange");
+console.log(fruits);                 // ["apple", "banana", "orange"]
+console.log(newLength);              // 3
+
+// pop() - remove from end, returns removed element
+var removed = fruits.pop();
+console.log(fruits);                 // ["apple", "banana"]
+console.log(removed);                // "orange"
+
+// unshift() - add to beginning, returns new length
+fruits.unshift("grape");
+console.log(fruits);                 // ["grape", "apple", "banana"]
+
+// shift() - remove from beginning, returns removed element
+var first = fruits.shift();
+console.log(fruits);                 // ["apple", "banana"]
+console.log(first);                  // "grape"
+</code></pre>
+        </div>
+        
+        <h4>splice() - Swiss Army Knife Method</h4>
+        <div class="info">
+            splice() can add, remove, or replace elements at any position. It modifies the original array and returns an array of removed elements.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>var colors = ["red", "green", "blue", "yellow"];
+
+// Remove elements: splice(start, deleteCount)
+var removed = colors.splice(1, 2);
+console.log(colors);                 // ["red", "yellow"]
+console.log(removed);                // ["green", "blue"]
+
+// Add elements: splice(start, 0, item1, item2, ...)
+colors.splice(1, 0, "purple", "orange");
+console.log(colors);                 // ["red", "purple", "orange", "yellow"]
+
+// Replace elements: splice(start, deleteCount, item1, item2, ...)
+colors.splice(1, 2, "black", "white");
+console.log(colors);                 // ["red", "black", "white", "yellow"]
+
+// Insert at end
+colors.splice(colors.length, 0, "pink");
+console.log(colors);                 // ["red", "black", "white", "yellow", "pink"]
+</code></pre>
+        </div>
+        
+        <h4>Sorting and Reversing</h4>
+        <div class="code-block">
+            <pre><code>var numbers = [3, 1, 4, 1, 5, 9];
+var letters = ["c", "a", "b"];
+
+// sort() - sorts in place (alphabetically by default)
+letters.sort();
+console.log(letters);                // ["a", "b", "c"]
+
+// Default sort converts to strings
+numbers.sort();
+console.log(numbers);                // [1, 1, 3, 4, 5, 9] (works for single digits)
+
+// Custom sort for numbers
+var nums = [10, 5, 40, 25, 1000, 1];
+nums.sort(function(a, b) {
+    return a - b;                    // ascending order
+});
+console.log(nums);                   // [1, 5, 10, 25, 40, 1000]
+
+// reverse() - reverses array in place
+nums.reverse();
+console.log(nums);                   // [1000, 40, 25, 10, 5, 1]
+</code></pre>
+        </div>
+        
+        <h3>Non-Mutating Methods (Return New Array/Value)</h3>
+        
+        <h4>Joining and Slicing</h4>
+        <div class="code-block">
+            <pre><code>var fruits = ["apple", "banana", "orange"];
+
+// join() - creates string from array
+console.log(fruits.join());          // "apple,banana,orange"
+console.log(fruits.join(" - "));     // "apple - banana - orange"
+console.log(fruits.join(""));        // "applebananaorange"
+
+// slice() - extracts portion of array
+console.log(fruits.slice(1));        // ["banana", "orange"]
+console.log(fruits.slice(0, 2));     // ["apple", "banana"]
+console.log(fruits.slice(-2));       // ["banana", "orange"]
+console.log(fruits.slice(-2, -1));   // ["banana"]
+
+// Original array unchanged
+console.log(fruits);                 // ["apple", "banana", "orange"]
+</code></pre>
+        </div>
+        
+        <h4>Concatenation</h4>
+        <div class="code-block">
+            <pre><code>var arr1 = [1, 2, 3];
+var arr2 = [4, 5, 6];
+var arr3 = [7, 8];
+
+// concat() - merges arrays
+var combined = arr1.concat(arr2);
+console.log(combined);               // [1, 2, 3, 4, 5, 6]
+
+// Multiple arrays
+var all = arr1.concat(arr2, arr3);
+console.log(all);                    // [1, 2, 3, 4, 5, 6, 7, 8]
+
+// Can include individual elements
+var mixed = arr1.concat(10, arr2, 20);
+console.log(mixed);                  // [1, 2, 3, 10, 4, 5, 6, 20]
+
+// Original arrays unchanged
+console.log(arr1);                   // [1, 2, 3]
+console.log(arr2);                   // [4, 5, 6]
+</code></pre>
+        </div>
+        
+        <h4>Search Methods</h4>
+        <div class="code-block">
+            <pre><code>var numbers = [1, 2, 3, 2, 4, 2];
+var fruits = ["apple", "banana", "orange"];
+
+// indexOf() - first occurrence
+console.log(numbers.indexOf(2));     // 1
+console.log(numbers.indexOf(2, 2));  // 3 (start search from index 2)
+console.log(numbers.indexOf(10));    // -1 (not found)
+
+// lastIndexOf() - last occurrence
+console.log(numbers.lastIndexOf(2)); // 5
+
+// Check if element exists
+function contains(array, element) {
+    return array.indexOf(element) !== -1;
+}
+
+console.log(contains(fruits, "banana")); // true
+console.log(contains(fruits, "grape"));  // false
+</code></pre>
+        </div>
+        
+        <h3>ES5 Array Iteration Methods</h3>
+        <div class="info">
+            ES5 introduced several powerful iteration methods that don't mutate the original array.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>var numbers = [1, 2, 3, 4, 5];
+
+// forEach() - execute function for each element
+numbers.forEach(function(element, index, array) {
+    console.log(index + ": " + element);
+});
+
+// map() - create new array with transformed elements
+var doubled = numbers.map(function(num) {
+    return num * 2;
+});
+console.log(doubled);                // [2, 4, 6, 8, 10]
+
+// filter() - create new array with elements that pass test
+var evens = numbers.filter(function(num) {
+    return num % 2 === 0;
+});
+console.log(evens);                  // [2, 4]
+
+// reduce() - reduce array to single value
+var sum = numbers.reduce(function(accumulator, current) {
+    return accumulator + current;
+}, 0);
+console.log(sum);                    // 15
+
+// some() - test if at least one element passes test
+var hasEven = numbers.some(function(num) {
+    return num % 2 === 0;
+});
+console.log(hasEven);                // true
+
+// every() - test if all elements pass test
+var allPositive = numbers.every(function(num) {
+    return num > 0;
+});
+console.log(allPositive);            // true
+</code></pre>
+        </div>
+        
+        <div class="warning">
+            <strong>Remember:</strong> Mutating methods change the original array, while non-mutating methods return new arrays or values. Choose wisely based on your needs!
+        </div>
+    </div>
+
+    <div class="section" id="date">
+        <h2>4. Date Object</h2>
+        <p>The Date object is used to work with dates and times in JavaScript. It represents a single moment in time.</p>
+        
+        <h3>Creating Date Objects</h3>
+        <div class="code-block">
+            <pre><code>// Current date and time
+var now = new Date();
+console.log(now);                    // Current date and time
+
+// Specific date (year, month[0-11], day, hour, minute, second, millisecond)
+var specificDate = new Date(2023, 0, 15);        // January 15, 2023
+var fullDate = new Date(2023, 0, 15, 14, 30, 0); // Jan 15, 2023 at 2:30 PM
+
+// From string
+var fromString = new Date("2023-01-15");
+var fromString2 = new Date("January 15, 2023");
+
+// From timestamp (milliseconds since Jan 1, 1970)
+var fromTimestamp = new Date(1673740800000);
+
+console.log(specificDate);           // Jan 15, 2023
+console.log(fullDate);               // Jan 15, 2023 2:30 PM
+</code></pre>
+        </div>
+        
+        <h3>Getting Date Components</h3>
+        <div class="code-block">
+            <pre><code>var date = new Date(2023, 0, 15, 14, 30, 45, 123); // Jan 15, 2023 2:30:45.123 PM
+
+// Get methods
+console.log(date.getFullYear());     // 2023
+console.log(date.getMonth());        // 0 (January = 0, February = 1, etc.)
+console.log(date.getDate());         // 15 (day of month)
+console.log(date.getDay());          // 0 (Sunday = 0, Monday = 1, etc.)
+
+console.log(date.getHours());        // 14 (24-hour format)
+console.log(date.getMinutes());      // 30
+console.log(date.getSeconds());      // 45
+console.log(date.getMilliseconds()); // 123
+
+// Get timestamp
+console.log(date.getTime());         // Milliseconds since Jan 1, 1970
+
+// UTC methods (for UTC time)
+console.log(date.getUTCFullYear());  // UTC year
+console.log(date.getUTCMonth());     // UTC month
+console.log(date.getUTCDate());      // UTC date
+</code></pre>
+        </div>
+        
+        <h3>Setting Date Components</h3>
+        <div class="code-block">
+            <pre><code>var date = new Date();
+
+// Set methods (modify the date object)
+date.setFullYear(2024);
+date.setMonth(5);                    // June (0-based)
+date.setDate(20);
+date.setHours(16);
+date.setMinutes(45);
+date.setSeconds(30);
+
+console.log(date);                   // June 20, 2024 4:45:30 PM
+
+// Set multiple components
+date.setFullYear(2025, 11, 25);      // December 25, 2025
+console.log(date);                   // Dec 25, 2025
+
+// Set from timestamp
+date.setTime(1640995200000);         // Set to specific timestamp
+console.log(date);
+</code></pre>
+        </div>
+        
+        <h3>Date Formatting and Conversion</h3>
+        <div class="code-block">
+            <pre><code>var date = new Date(2023, 0, 15, 14, 30, 45);
+
+// String representations
+console.log(date.toString());        // Full date string
+console.log(date.toDateString());    // "Sun Jan 15 2023"
+console.log(date.toTimeString());    // "14:30:45 GMT+0000 (UTC)"
+
+// Locale-specific formatting
+console.log(date.toLocaleDateString()); // "1/15/2023" (US format)
+console.log(date.toLocaleTimeString()); // "2:30:45 PM"
+console.log(date.toLocaleString());     // "1/15/2023, 2:30:45 PM"
+
+// ISO format
+console.log(date.toISOString());     // "2023-01-15T14:30:45.000Z"
+
+// Custom formatting function
+function formatDate(date) {
+    var day = date.getDate();
+    var month = date.getMonth() + 1;  // Add 1 because months are 0-based
+    var year = date.getFullYear();
+    
+    // Pad with zeros if needed
+    day = day < 10 ? '0' + day : day;
+    month = month < 10 ? '0' + month : month;
+    
+    return day + '/' + month + '/' + year;
+}
+
+console.log(formatDate(date));       // "15/01/2023"
+</code></pre>
+        </div>
+        
+        <h3>Date Calculations</h3>
+        <div class="code-block">
+            <pre><code>var date1 = new Date(2023, 0, 15);   // Jan 15, 2023
+var date2 = new Date(2023, 0, 20);   // Jan 20, 2023
+
+// Calculate difference (in milliseconds)
+var difference = date2.getTime() - date1.getTime();
+console.log(difference);             // 432000000 (5 days in milliseconds)
+
+// Convert to days
+var daysDifference = difference / (1000 * 60 * 60 * 24);
+console.log(daysDifference);         // 5
+
+// Add days to date
+function addDays(date, days) {
+    var result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+}
+
+var futureDate = addDays(date1, 10);
+console.log(futureDate);             // Jan 25, 2023
+
+// Get days between dates
+function daysBetween(date1, date2) {
+    var oneDay = 24 * 60 * 60 * 1000; // hours*minutes*seconds*milliseconds
+    return Math.round(Math.abs((date2 - date1) / oneDay));
+}
+
+console.log(daysBetween(date1, date2)); // 5
+</code></pre>
+        </div>
+        
+        <h3>Common Date Utilities</h3>
+        <div class="code-block">
+            <pre><code>// Check if year is leap year
+function isLeapYear(year) {
+    return (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+}
+
+console.log(isLeapYear(2024));       // true
+console.log(isLeapYear(2023));       // false
+
+// Get days in month
+function getDaysInMonth(year, month) {
+    return new Date(year, month + 1, 0).getDate();
+}
+
+console.log(getDaysInMonth(2023, 1)); // 28 (February 2023)
+console.log(getDaysInMonth(2024, 1)); // 29 (February 2024 - leap year)
+
+// Get age from birthdate
+function calculateAge(birthDate) {
+    var today = new Date();
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    
+    return age;
+}
+
+var birthDate = new Date(1990, 5, 15); // June 15, 1990
+console.log(calculateAge(birthDate));   // Current age
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="math">
+        <h2>5. Math Object</h2>
+        <p>The Math object provides mathematical constants and functions. Unlike other objects, Math is not a constructor - all properties and methods are static.</p>
+        
+        <h3>Math Constants</h3>
+        <div class="code-block">
+            <pre><code>// Common mathematical constants
+console.log(Math.PI);                // 3.141592653589793
+console.log(Math.E);                 // 2.718281828459045 (Euler's number)
+console.log(Math.LN2);               // 0.6931471805599453 (ln(2))
+console.log(Math.LN10);              // 2.302585092994046 (ln(10))
+console.log(Math.LOG2E);             // 1.4426950408889634 (log₂(e))
+console.log(Math.LOG10E);            // 0.4342944819032518 (log₁₀(e))
+console.log(Math.SQRT1_2);           // 0.7071067811865476 (√(1/2))
+console.log(Math.SQRT2);             // 1.4142135623730951 (√2)
+
+// Calculate circle area and circumference
+var radius = 5;
+var area = Math.PI * radius * radius;
+var circumference = 2 * Math.PI * radius;
+console.log("Area:", area);          // 78.54
+console.log("Circumference:", circumference); // 31.42
+</code></pre>
+        </div>
+        
+        <h3>Rounding Methods</h3>
+        <div class="code-block">
+            <pre><code>var num = 4.7;
+var negNum = -4.7;
+
+// Math.round() - round to nearest integer
+console.log(Math.round(4.3));        // 4
+console.log(Math.round(4.7));        // 5
+console.log(Math.round(-4.3));       // -4
+console.log(Math.round(-4.7));       // -5
+
+// Math.floor() - round down to nearest integer
+console.log(Math.floor(4.3));        // 4
+console.log(Math.floor(4.7));        // 4
+console.log(Math.floor(-4.3));       // -5
+console.log(Math.floor(-4.7));       // -5
+
+// Math.ceil() - round up to nearest integer
+console.log(Math.ceil(4.3));         // 5
+console.log(Math.ceil(4.7));         // 5
+console.log(Math.ceil(-4.3));        // -4
+console.log(Math.ceil(-4.7));        // -4
+
+// Round to decimal places
+function roundToDecimals(num, decimals) {
+    var factor = Math.pow(10, decimals);
+    return Math.round(num * factor) / factor;
+}
+
+console.log(roundToDecimals(4.56789, 2)); // 4.57
+console.log(roundToDecimals(4.56789, 3)); // 4.568
+</code></pre>
+        </div>
+        
+        <h3>Min, Max, and Absolute Values</h3>
+        <div class="code-block">
+            <pre><code>// Math.min() and Math.max()
+console.log(Math.min(5, 3, 8, 1, 9));    // 1
+console.log(Math.max(5, 3, 8, 1, 9));    // 9
+console.log(Math.min());                  // Infinity
+console.log(Math.max());                  // -Infinity
+
+// With arrays (use apply)
+var numbers = [5, 3, 8, 1, 9];
+console.log(Math.min.apply(null, numbers)); // 1
+console.log(Math.max.apply(null, numbers)); // 9
+
+// Math.abs() - absolute value
+console.log(Math.abs(-5));            // 5
+console.log(Math.abs(5));             // 5
+console.log(Math.abs(-3.14));         // 3.14
+
+// Find distance between two points
+function distance(x1, y1, x2, y2) {
+    var dx = Math.abs(x2 - x1);
+    var dy = Math.abs(y2 - y1);
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
+console.log(distance(0, 0, 3, 4));   // 5 (3-4-5 triangle)
+</code></pre>
+        </div>
+        
+        <h3>Power and Root Functions</h3>
+        <div class="code-block">
+            <pre><code>// Math.pow() - power function
+console.log(Math.pow(2, 3));          // 8 (2³)
+console.log(Math.pow(4, 0.5));        // 2 (√4)
+console.log(Math.pow(27, 1/3));       // 3 (∛27)
+
+// Math.sqrt() - square root
+console.log(Math.sqrt(16));           // 4
+console.log(Math.sqrt(2));            // 1.414...
+console.log(Math.sqrt(-1));           // NaN
+
+// Calculate compound interest
+function compoundInterest(principal, rate, time, compound) {
+    return principal * Math.pow((1 + rate / compound), compound * time);
+}
+
+var amount = compoundInterest(1000, 0.05, 2, 4); // $1000 at 5% for 2 years, quarterly
+console.log("Amount:", amount.toFixed(2)); // $1104.89
+</code></pre>
+        </div>
+        
+        
+        
+        <h3>Random Numbers</h3>
+        <div class="code-block">
+            <pre><code>// Math.random() - returns number between 0 (inclusive) and 1 (exclusive)
+console.log(Math.random());           // Random number like 0.7834592834
+
+// Random integer between min and max (inclusive)
+function randomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+console.log(randomInt(1, 6));         // Random dice roll (1-6)
+console.log(randomInt(10, 20));       // Random number between 10-20
+
+// Random float between min and max
+function randomFloat(min, max) {
+    return Math.random() * (max - min) + min;
+}
+
+console.log(randomFloat(1.5, 2.5));   // Random float between 1.5-2.5
+
+// Random array element
+function randomChoice(array) {
+    return array[randomInt(0, array.length - 1)];
+}
+
+var colors = ["red", "green", "blue", "yellow"];
+console.log(randomChoice(colors));    // Random color
+
+// Shuffle array (Fisher-Yates algorithm)
+function shuffleArray(array) {
+    var shuffled = array.slice(); // Create copy
+    for (var i = shuffled.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = shuffled[i];
+        shuffled[i] = shuffled[j];
+        shuffled[j] = temp;
+    }
+    return shuffled;
+}
+
+var numbers = [1, 2, 3, 4, 5];
+console.log(shuffleArray(numbers));   // Randomly shuffled array
+</code></pre>
+        </div>
+        
+        <h3>Practical Math Examples</h3>
+        <div class="code-block">
+            <pre><code>// Calculate loan payment
+function monthlyPayment(principal, annualRate, years) {
+    var monthlyRate = annualRate / 12;
+    var numPayments = years * 12;
+    
+    if (monthlyRate === 0) {
+        return principal / numPayments;
+    }
+    
+    var payment = principal * (monthlyRate * Math.pow(1 + monthlyRate, numPayments)) /
+                  (Math.pow(1 + monthlyRate, numPayments) - 1);
+    
+    return payment;
+}
+
+var payment = monthlyPayment(200000, 0.04, 30); // $200k loan at 4% for 30 years
+console.log("Monthly payment:", payment.toFixed(2)); // $954.83
+
+// Convert temperature
+function celsiusToFahrenheit(celsius) {
+    return celsius * 9/5 + 32;
+}
+
+function fahrenheitToCelsius(fahrenheit) {
+    return (fahrenheit - 32) * 5/9;
+}
+
+console.log(celsiusToFahrenheit(25));    // 77°F
+console.log(fahrenheitToCelsius(77));    // 25°C
+
+// Calculate BMI
+function calculateBMI(weight, height) {
+    return weight / Math.pow(height, 2);
+}
+
+var bmi = calculateBMI(70, 1.75); // 70kg, 1.75m
+console.log("BMI:", bmi.toFixed(1)); // 22.9
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Practice Exercises</h2>
+        <p>Try these exercises to reinforce your understanding:</p>
+        <ol>
+            <li>Create a function that extracts the domain from an email address using string methods</li>
+            <li>Write a function that removes all duplicates from an array without using ES6 features</li>
+            <li>Build a simple calculator that formats the current date in different ways</li>
+            <li>Create a number guessing game using Math.random()</li>
+            <li>Write a function that sorts an array of objects by a specific property</li>
+            <li>Build a function that calculates the number of working days between two dates</li>
+        </ol>
+        
+        <div class="info">
+            <strong>Next Steps:</strong> Practice these concepts by building small applications that combine string manipulation, array processing, and mathematical calculations.
+        </div>
+    </div>
+
+    <script src="strings-arrays-date-math.js"></script>
+</body>
+</html>

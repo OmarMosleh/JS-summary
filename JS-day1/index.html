@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript ES5 Introduction - JS Guide</title>
+    <link rel="stylesheet" href="../shared-styles.css">
+</head>
+<body>
+    <h1>JavaScript ES5 Introduction - Comprehensive Lecture</h1>
+    
+    <div class="section toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#intro">1. JavaScript ES5 Introduction</a></li>
+            <li><a href="#features">2. JavaScript Features</a></li>
+            <li><a href="#where-to-write">3. Where to Write JavaScript</a></li>
+            <li><a href="#numbers">4. Numbers - Literal vs Constructor</a></li>
+            <li><a href="#data-types">5. Data Types (Primitive vs Non-Primitive)</a></li>
+            <li><a href="#tostring">6. toString() Method</a></li>
+            <li><a href="#dialogs">7. Dialogs and Their Return Values</a></li>
+            <li><a href="#nan">8. NaN (Not a Number)</a></li>
+            <li><a href="#casting">9. Type Casting (Implicit vs Explicit)</a></li>
+            <li><a href="#variables">10. Variable Declaration and Scopes with var</a></li>
+        </ul>
+    </div>
+
+    <div class="section" id="intro">
+        <h2>1. JavaScript ES5 Introduction</h2>
+        <p>JavaScript ES5 (ECMAScript 5) was released in 2009 and remained the standard for many years. It introduced several important features while maintaining backward compatibility.</p>
+        
+        <h3>What is JavaScript?</h3>
+        <div class="key-point">
+            JavaScript is a high-level, interpreted programming language that makes web pages interactive and dynamic.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// Your first JavaScript program
+console.log("Hello, JavaScript ES5!");
+
+// JavaScript can manipulate HTML elements
+document.write("Welcome to JavaScript ES5 Learning!");
+</code></pre>
+        </div>
+        
+        <h3>Brief History</h3>
+        <ul>
+            <li><strong>1995:</strong> JavaScript created by Brendan Eich at Netscape</li>
+            <li><strong>1997:</strong> ECMAScript standard established</li>
+            <li><strong>2009:</strong> ES5 released with strict mode and new methods</li>
+            <li><strong>Present:</strong> ES5 still widely used for compatibility</li>
+        </ul>
+    </div>
+
+    <div class="section" id="features">
+        <h2>2. JavaScript Features</h2>
+        
+        <h3>Loosely Typed Language</h3>
+        <div class="info">
+            JavaScript is loosely typed (also called dynamically typed), meaning you don't need to declare the data type of variables explicitly.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// No need to specify data types
+var name = "John";          // String
+var age = 25;               // Number
+var isStudent = true;       // Boolean
+
+// Variables can change types
+var dynamicVar = "Hello";   // String
+dynamicVar = 42;            // Now it's a Number
+dynamicVar = false;         // Now it's a Boolean
+
+console.log(typeof name);       // "string"
+console.log(typeof age);        // "number"
+console.log(typeof isStudent);  // "boolean"
+</code></pre>
+        </div>
+        
+        <h3>Object-Based Language</h3>
+        <div class="key-point">
+            JavaScript is object-based, meaning everything in JavaScript is treated as an object or can be converted to an object.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// Even primitive types have object-like behavior
+var str = "Hello";
+console.log(str.length);        // 5
+console.log(str.toUpperCase()); // "HELLO"
+
+// Numbers have methods too
+var num = 3.14159;
+console.log(num.toFixed(2));    // "3.14"
+
+// Arrays are objects
+var arr = [1, 2, 3];
+console.log(typeof arr);        // "object"
+console.log(arr.length);        // 3
+</code></pre>
+        </div>
+        
+        <h3>Interpreted Language</h3>
+        <div class="info">
+            JavaScript is an interpreted language, meaning the code is executed line by line at runtime without prior compilation.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// Code is executed immediately
+console.log("This runs first");
+console.log("This runs second");
+console.log("This runs third");
+
+// No compilation step needed
+var result = 5 + 3;
+console.log("Result: " + result);
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="where-to-write">
+        <h2>3. Where to Write JavaScript</h2>
+        
+        <h3>1. Inline JavaScript (In HTML attributes)</h3>
+        <div class="code-block">
+            <pre><code>&lt;button onclick="alert('Button clicked!')"&gt;Click Me&lt;/button&gt;
+&lt;a href="javascript:void(0)" onclick="console.log('Link clicked')"&gt;Click Link&lt;/a&gt;</code></pre>
+        </div>
+        
+        <h3>2. Internal JavaScript (In &lt;script&gt; tags)</h3>
+        <div class="code-block">
+            <pre><code>&lt;script&gt;
+    function greetUser() {
+        var name = prompt("What's your name?");
+        alert("Hello, " + name + "!");
+    }
+    
+    // Execute when page loads
+    window.onload = function() {
+        console.log("Page loaded!");
+    };
+&lt;/script&gt;</code></pre>
+        </div>
+        
+        <h3>3. External JavaScript (Separate .js files)</h3>
+        <div class="code-block">
+            <pre><code>&lt;!-- In HTML file --&gt;
+&lt;script src="js-introduction.js"&gt;&lt;/script&gt;
+&lt;script src="js-examples.js"&gt;&lt;/script&gt;</code></pre>
+        </div>
+        
+        <div class="warning">
+            <strong>Best Practice:</strong> Use external JavaScript files for better code organization and reusability.
+        </div>
+    </div>
+
+    <div class="section" id="numbers">
+        <h2>4. Numbers - Literal vs Constructor</h2>
+        
+        <h3>Number Literals</h3>
+        <div class="info">
+            Number literals are the most common and efficient way to create numbers.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// Integer literals
+var integer = 42;
+var negative = -15;
+var zero = 0;
+
+// Floating-point literals
+var decimal = 3.14;
+var scientific = 2.5e3;        // 2500
+var smallNumber = 1.23e-4;     // 0.000123
+
+// Different number systems
+var binary = 0b1010;           // 10 in decimal
+var octal = 0o777;             // 511 in decimal  
+var hexadecimal = 0xFF;        // 255 in decimal
+
+console.log("Integer:", integer);
+console.log("Decimal:", decimal);
+console.log("Scientific:", scientific);
+</code></pre>
+        </div>
+        
+        <h3>Number Constructor</h3>
+        <div class="code-block">
+            <pre><code>// Using Number constructor
+var numFromConstructor = new Number(42);
+var numFromFunction = Number("123");
+
+console.log(typeof 42);                    // "number"
+console.log(typeof new Number(42));        // "object"
+console.log(typeof Number("123"));         // "number"
+
+// Constructor creates object wrapper
+var literal = 42;
+var constructor = new Number(42);
+
+console.log(literal === constructor);      // false
+console.log(literal == constructor);       // true (type coercion)
+console.log(literal.valueOf() === constructor.valueOf()); // true
+</code></pre>
+        </div>
+        
+        <div class="warning">
+            <strong>Warning:</strong> Using <code>new Number()</code> creates an object, not a primitive number. Prefer number literals for better performance.
+        </div>
+    </div>
+
+    <div class="section" id="data-types">
+        <h2>5. Data Types (Primitive vs Non-Primitive)</h2>
+        
+        <h3>Primitive Data Types</h3>
+        <div class="key-point">
+            Primitive types store actual values and are immutable. ES5 has 5 primitive types.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// 1. Number
+var age = 25;
+var price = 99.99;
+var infinity = Infinity;
+
+// 2. String  
+var name = "John Doe";
+var message = 'Hello World';
+var empty = "";
+
+// 3. Boolean
+var isActive = true;
+var isComplete = false;
+
+// 4. Undefined
+var notDefined;
+var explicitUndefined = undefined;
+
+// 5. Null
+var emptyValue = null;
+
+// Check types
+console.log(typeof age);            // "number"
+console.log(typeof name);           // "string"
+console.log(typeof isActive);       // "boolean"
+console.log(typeof notDefined);     // "undefined"
+console.log(typeof emptyValue);     // "object" (this is a known quirk!)
+</code></pre>
+        </div>
+        
+        <h3>Non-Primitive Data Types</h3>
+        <div class="key-point">
+            Non-primitive types store references to values and are mutable.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// Object
+var person = {
+    name: "Alice",
+    age: 30
+};
+
+// Array (special type of object)
+var numbers = [1, 2, 3, 4, 5];
+var mixed = ["hello", 42, true, null];
+
+// Function (special type of object)
+var greet = function(name) {
+    return "Hello, " + name;
+};
+
+// Date (built-in object)
+var now = new Date();
+
+// Check types
+console.log(typeof person);         // "object"
+console.log(typeof numbers);        // "object"
+console.log(typeof greet);          // "function"
+console.log(typeof now);            // "object"
+
+// Arrays are objects
+console.log(Array.isArray(numbers)); // true
+console.log(Array.isArray(person));  // false
+</code></pre>
+        </div>
+        
+        <h3>Primitive vs Non-Primitive Behavior</h3>
+        <div class="code-block">
+            <pre><code>// Primitive types - pass by value
+var a = 5;
+var b = a;
+a = 10;
+console.log(a); // 10
+console.log(b); // 5 (unchanged)
+
+// Non-primitive types - pass by reference
+var obj1 = { name: "John" };
+var obj2 = obj1;
+obj1.name = "Jane";
+console.log(obj1.name); // "Jane"
+console.log(obj2.name); // "Jane" (changed!)
+
+// Primitive immutability
+var str = "Hello";
+str.toUpperCase(); // Creates new string
+console.log(str);  // "Hello" (original unchanged)
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="tostring">
+        <h2>6. toString() Method</h2>
+        
+        <div class="info">
+            The toString() method converts a value to a string representation. Every object in JavaScript has this method.
+        </div>
+        
+        <h3>Number toString()</h3>
+        <div class="code-block">
+            <pre><code>var num = 255;
+
+// Default toString()
+console.log(num.toString());        // "255"
+
+// toString() with radix (base)
+console.log(num.toString(2));       // "11111111" (binary)
+console.log(num.toString(8));       // "377" (octal)
+console.log(num.toString(16));      // "ff" (hexadecimal)
+
+var decimal = 3.14159;
+console.log(decimal.toString());    // "3.14159"
+
+// Special numbers
+console.log(Infinity.toString());   // "Infinity"
+console.log(NaN.toString());        // "NaN"
+</code></pre>
+        </div>
+        
+        <h3>Boolean toString()</h3>
+        <div class="code-block">
+            <pre><code>var isTrue = true;
+var isFalse = false;
+
+console.log(isTrue.toString());     // "true"
+console.log(isFalse.toString());    // "false"
+
+// Direct call
+console.log(true.toString());       // "true"
+console.log(false.toString());      // "false"
+</code></pre>
+        </div>
+        
+        <h3>Array toString()</h3>
+        <div class="code-block">
+            <pre><code>var fruits = ["apple", "banana", "orange"];
+var numbers = [1, 2, 3, 4, 5];
+
+console.log(fruits.toString());     // "apple,banana,orange"
+console.log(numbers.toString());    // "1,2,3,4,5"
+
+// Empty array
+var empty = [];
+console.log(empty.toString());      // ""
+
+// Nested arrays
+var nested = [[1, 2], [3, 4]];
+console.log(nested.toString());     // "1,2,3,4"
+</code></pre>
+        </div>
+        
+        <h3>Object toString()</h3>
+        <div class="code-block">
+            <pre><code>var person = { name: "John", age: 30 };
+console.log(person.toString());     // "[object Object]"
+
+// Custom toString() method
+var car = {
+    brand: "Toyota",
+    model: "Camry",
+    toString: function() {
+        return this.brand + " " + this.model;
+    }
+};
+
+console.log(car.toString());        // "Toyota Camry"
+
+// Date toString()
+var now = new Date();
+console.log(now.toString());        // Full date string
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="dialogs">
+        <h2>7. Dialogs and Their Return Values</h2>
+        
+        <h3>alert() Dialog</h3>
+        <div class="info">
+            The alert() dialog displays a message and waits for the user to click OK.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// alert() returns undefined
+var result = alert("This is an alert!");
+console.log(result);                // undefined
+
+// Common usage
+alert("Welcome to our website!");
+alert("Form submitted successfully!");
+
+// With variables
+var userName = "John";
+alert("Hello, " + userName + "!");
+</code></pre>
+        </div>
+        
+        <h3>confirm() Dialog</h3>
+        <div class="info">
+            The confirm() dialog displays a message with OK and Cancel buttons, returning true or false.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// confirm() returns boolean
+var userChoice = confirm("Do you want to continue?");
+console.log(userChoice);            // true or false
+
+if (userChoice) {
+    console.log("User clicked OK");
+} else {
+    console.log("User clicked Cancel");
+}
+
+// Practical example
+var deleteConfirm = confirm("Are you sure you want to delete this item?");
+if (deleteConfirm) {
+    // Proceed with deletion
+    console.log("Item deleted");
+} else {
+    console.log("Deletion cancelled");
+}
+</code></pre>
+        </div>
+        
+        <h3>prompt() Dialog</h3>
+        <div class="info">
+            The prompt() dialog displays a message with an input field, returning the entered string or null.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// prompt() returns string or null
+var userInput = prompt("What's your name?");
+console.log(userInput);             // String entered or null
+
+// With default value
+var age = prompt("What's your age?", "25");
+console.log(typeof age);            // "string" (even for numbers!)
+
+// Handling different cases
+var name = prompt("Enter your name:");
+if (name === null) {
+    console.log("User cancelled");
+} else if (name === "") {
+    console.log("User entered empty string");
+} else {
+    console.log("Hello, " + name + "!");
+}
+
+// Converting prompt input
+var ageString = prompt("Enter your age:");
+var ageNumber = parseInt(ageString, 10);
+console.log("Age as number:", ageNumber);
+</code></pre>
+        </div>
+        
+        <div class="warning">
+            <strong>Note:</strong> prompt() always returns a string (or null). Convert to numbers when needed using parseInt() or parseFloat().
+        </div>
+    </div>
+
+    <div class="section" id="nan">
+        <h2>8. NaN (Not a Number)</h2>
+        
+        <div class="key-point">
+            NaN represents a value that is "Not a Number" but paradoxically has the type "number".
+        </div>
+        
+        <h3>What Produces NaN?</h3>
+        <div class="code-block">
+            <pre><code>// Invalid mathematical operations
+console.log(0 / 0);                 // NaN
+console.log(Math.sqrt(-1));         // NaN
+console.log("hello" * 2);           // NaN
+console.log("abc" - 10);            // NaN
+
+// Parsing invalid numbers
+console.log(parseInt("hello"));     // NaN
+console.log(parseFloat("xyz"));     // NaN
+console.log(Number("not a number"));// NaN
+
+// Mathematical functions with invalid input
+console.log(Math.log(-1));          // NaN
+console.log(Math.acos(2));          // NaN
+</code></pre>
+        </div>
+        
+        <h3>Properties of NaN</h3>
+        <div class="code-block">
+            <pre><code>// NaN is of type "number"
+console.log(typeof NaN);            // "number"
+
+// NaN is not equal to anything, including itself!
+console.log(NaN === NaN);           // false
+console.log(NaN == NaN);            // false
+
+// Comparing with NaN
+var result = "hello" * 2;
+console.log(result === NaN);        // false (doesn't work!)
+console.log(result == NaN);         // false (doesn't work!)
+</code></pre>
+        </div>
+        
+        <h3>Detecting NaN</h3>
+        <div class="code-block">
+            <pre><code>// Use isNaN() function
+var value1 = "hello" * 2;
+var value2 = 42;
+var value3 = "123";
+
+console.log(isNaN(value1));         // true
+console.log(isNaN(value2));         // false
+console.log(isNaN(value3));         // false (string "123" converts to 123)
+
+// isNaN() performs type conversion first
+console.log(isNaN("hello"));        // true ("hello" converts to NaN)
+console.log(isNaN("123"));          // false ("123" converts to 123)
+console.log(isNaN(true));           // false (true converts to 1)
+
+// More precise check (ES5 doesn't have Number.isNaN)
+function isActuallyNaN(value) {
+    return value !== value;  // Only NaN fails this test
+}
+
+console.log(isActuallyNaN(NaN));    // true
+console.log(isActuallyNaN("hello"));// false
+</code></pre>
+        </div>
+        
+        <h3>Working with NaN</h3>
+        <div class="code-block">
+            <pre><code>// Safe mathematical operations
+function safeDivide(a, b) {
+    var result = a / b;
+    if (isNaN(result)) {
+        return "Cannot divide by zero or invalid input";
+    }
+    return result;
+}
+
+console.log(safeDivide(10, 2));     // 5
+console.log(safeDivide(10, 0));     // "Cannot divide..."
+console.log(safeDivide("a", 2));    // "Cannot divide..."
+
+// Converting strings to numbers safely
+function parseNumber(str) {
+    var num = parseFloat(str);
+    return isNaN(num) ? 0 : num;
+}
+
+console.log(parseNumber("123.45")); // 123.45
+console.log(parseNumber("hello"));  // 0
+</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="casting">
+        <h2>9. Type Casting (Implicit vs Explicit)</h2>
+        
+        <h3>Implicit Casting (Type Coercion)</h3>
+        <div class="info">
+            JavaScript automatically converts types when needed. This can be helpful but also surprising!
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// String concatenation (+ operator)
+console.log("5" + 3);               // "53" (number to string)
+console.log(5 + "3");               // "53" (number to string)
+console.log("Hello" + true);        // "Hellotrue" (boolean to string)
+
+// Arithmetic operations (-, *, /, %)
+console.log("10" - 5);              // 5 (string to number)
+console.log("10" * "2");            // 20 (both strings to numbers)
+console.log("20" / "4");            // 5 (both strings to numbers)
+console.log("15" % "4");            // 3 (both strings to numbers)
+
+// Boolean context
+console.log("5" == 5);              // true (string to number)
+console.log(true == 1);             // true (boolean to number)
+console.log(false == 0);            // true (boolean to number)
+console.log("" == false);           // true (both to numbers: 0)
+
+// Unexpected coercions
+console.log([] + []);               // "" (empty string)
+console.log([] + {});               // "[object Object]"
+console.log({} + []);               // "[object Object]"
+</code></pre>
+        </div>
+        
+        <h3>Explicit Casting</h3>
+        <div class="info">
+            Explicitly convert types using built-in functions for predictable results.
+        </div>
+        
+        <h4>To String</h4>
+        <div class="code-block">
+            <pre><code>// Using String() function
+var num = 123;
+var bool = true;
+var obj = { name: "John" };
+
+console.log(String(num));           // "123"
+console.log(String(bool));          // "true"
+console.log(String(obj));           // "[object Object]"
+
+// Using toString() method
+console.log(num.toString());        // "123"
+console.log(bool.toString());       // "true"
+
+// Concatenation with empty string
+console.log(num + "");              // "123"
+console.log(bool + "");             // "true"
+</code></pre>
+        </div>
+        
+        <h4>To Number</h4>
+        <div class="code-block">
+            <pre><code>// Using Number() function
+console.log(Number("123"));         // 123
+console.log(Number("123.45"));      // 123.45
+console.log(Number(""));            // 0
+console.log(Number("  "));          // 0
+console.log(Number("hello"));       // NaN
+console.log(Number(true));          // 1
+console.log(Number(false));         // 0
+
+// Using parseInt() and parseFloat()
+console.log(parseInt("123"));       // 123
+console.log(parseInt("123.45"));    // 123 (stops at decimal)
+console.log(parseInt("123abc"));    // 123 (stops at first non-digit)
+console.log(parseFloat("123.45"));  // 123.45
+console.log(parseFloat("123.45abc"));// 123.45
+
+// Using unary + operator
+console.log(+"123");                // 123
+console.log(+"123.45");             // 123.45
+console.log(+true);                 // 1
+console.log(+false);                // 0
+</code></pre>
+        </div>
+        
+        <h4>To Boolean</h4>
+        <div class="code-block">
+            <pre><code>// Using Boolean() function
+console.log(Boolean(1));            // true
+console.log(Boolean(0));            // false
+console.log(Boolean("hello"));      // true
+console.log(Boolean(""));           // false
+console.log(Boolean([]));           // true (empty array is truthy!)
+console.log(Boolean({}));           // true (empty object is truthy!)
+
+// Falsy values in JavaScript
+console.log(Boolean(false));        // false
+console.log(Boolean(0));            // false
+console.log(Boolean(""));           // false
+console.log(Boolean(null));         // false
+console.log(Boolean(undefined));    // false
+console.log(Boolean(NaN));          // false
+
+// Using double negation (!!)
+console.log(!!"hello");             // true
+console.log(!!0);                   // false
+console.log(!!"");                  // false
+</code></pre>
+        </div>
+        
+        <div class="warning">
+            <strong>Best Practice:</strong> Use explicit casting for clearer, more predictable code. Avoid relying on implicit coercion.
+        </div>
+    </div>
+
+    <div class="section" id="variables">
+        <h2>10. Variable Declaration and Scopes with var</h2>
+        
+        <h3>Variable Declaration with var</h3>
+        <div class="info">
+            In ES5, <code>var</code> is the primary way to declare variables. It has function scope and hoisting behavior.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// Basic variable declaration
+var name;                           // Declares variable (undefined)
+var age = 25;                       // Declares and initializes
+var city = "New York", country = "USA"; // Multiple declarations
+
+console.log(name);                  // undefined
+console.log(age);                   // 25
+
+// Variables can be reassigned
+var message = "Hello";
+message = "Goodbye";
+message = 123;                      // Different type OK
+console.log(message);               // 123
+</code></pre>
+        </div>
+        
+        <h3>Function Scope</h3>
+        <div class="key-point">
+            Variables declared with <code>var</code> have function scope, meaning they're accessible throughout the entire function.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>function demonstrateScope() {
+    var functionVar = "I'm in function scope";
+    
+    if (true) {
+        var blockVar = "I'm also in function scope";
+        console.log(functionVar);   // Accessible
+    }
+    
+    console.log(blockVar);          // Still accessible! (no block scope)
+    
+    for (var i = 0; i < 3; i++) {
+        var loopVar = "I'm in the loop";
+    }
+    
+    console.log(i);                 // 3 (still accessible!)
+    console.log(loopVar);           // Still accessible!
+}
+
+demonstrateScope();
+
+// These variables are not accessible outside the function
+// console.log(functionVar);       // ReferenceError
+</code></pre>
+        </div>
+        
+        <h3>Global Scope</h3>
+        <div class="code-block">
+            <pre><code>// Global variables
+var globalVar = "I'm global";
+
+function testGlobal() {
+    console.log(globalVar);         // Accessible from anywhere
+    
+    // Implicit global (avoid this!)
+    implicitGlobal = "No var keyword";
+}
+
+testGlobal();
+console.log(implicitGlobal);        // "No var keyword" (now global!)
+
+// In browser, global variables become window properties
+console.log(window.globalVar);      // "I'm global" (in browser)
+</code></pre>
+        </div>
+        
+        <h3>Variable Hoisting</h3>
+        <div class="warning">
+            Variables declared with <code>var</code> are "hoisted" - the declaration is moved to the top of the function, but not the initialization.
+        </div>
+        
+        <div class="code-block">
+            <pre><code>// What you write:
+function hoistingExample() {
+    console.log(hoistedVar);        // undefined (not ReferenceError!)
+    
+    var hoistedVar = "I'm hoisted";
+    
+    console.log(hoistedVar);        // "I'm hoisted"
+}
+
+// How JavaScript interprets it:
+function hoistingExample() {
+    var hoistedVar;                 // Declaration hoisted
+    
+    console.log(hoistedVar);        // undefined
+    
+    hoistedVar = "I'm hoisted";     // Assignment stays in place
+    
+    console.log(hoistedVar);        // "I'm hoisted"
+}
+
+hoistingExample();
+</code></pre>
+        </div>
+        
+        
+        
+        
+        <div class="info">
+            <strong>Remember:</strong> ES5 only has <code>var</code> for variable declaration. <code>let</code> and <code>const</code> were introduced in ES6.
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Practice Exercises</h2>
+        <p>Try these exercises to reinforce your understanding:</p>
+        <ol>
+            <li>Create variables of different primitive types and log their types</li>
+            <li>Experiment with type coercion using different operators</li>
+            <li>Create a function that safely converts user input from prompts to numbers</li>
+            <li>Demonstrate variable hoisting with console.log statements</li>
+            <li>Create a simple calculator using dialogs for input and output</li>
+        </ol>
+        
+        <div class="info">
+            <strong>Next Steps:</strong> Practice these concepts in the browser console or create separate JavaScript files to experiment with the code examples.
+        </div>
+    </div>
+
+    <script src="js-introduction.js"></script>
+</body>
+</html>

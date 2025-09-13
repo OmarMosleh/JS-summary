@@ -1,0 +1,1154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript ES5/ES6 - Functions, Closures & Modern Features</title>
+    <link rel="stylesheet" href="../shared-styles.css">
+</head>
+<body>
+    <h1>JavaScript ES5/ES6 - Functions, Closures & Modern Features</h1>
+    
+    <div class="section toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><strong>Part 1: Functions in JavaScript</strong></li>
+            <li><a href="#function-types">1. Function Statement vs Function Expression</a></li>
+            <li><a href="#hoisting">2. Function Hoisting</a></li>
+            <li><a href="#first-class">3. Functions as First-Class Citizens</a></li>
+            <li><a href="#arguments">4. The Arguments Object</a></li>
+            <li><a href="#closures">5. Closures</a></li>
+            <li><a href="#iife">6. IIFE (Immediately Invoked Function Expression)</a></li>
+            <li><a href="#this-context">7. "this" Context and Call/Apply/Bind</a></li>
+            <li><strong>Part 2: ES6 Modern Features</strong></li>
+            <li><a href="#let-const">8. let, const vs var</a></li>
+            <li><a href="#template-literals">9. Template Literals</a></li>
+            <li><a href="#arrow-functions">10. Arrow Functions</a></li>
+            <li><a href="#arrow-this">11. Arrow Functions and "this" Context</a></li>
+        </ul>
+    </div>
+
+    <!-- PART 1: FUNCTIONS IN JAVASCRIPT -->
+    <div class="section" id="function-types">
+        <h2>1. Function Statement vs Function Expression</h2>
+        
+        <div class="info-box">
+            <strong>Two Ways to Create Functions:</strong> Function statements are hoisted, function expressions are not.
+        </div>
+        
+        <h3>Function Statement (Declaration)</h3>
+        <div class="code-block">
+            <pre><code>// Function statement - can be called before declaration
+sum(5, 6); // This works! Output: 11
+
+function sum(a, b) {
+    console.log(a + b);
+}
+
+// Function statement characteristics:
+// 1. Hoisted (available before declaration)
+// 2. Function name is mandatory
+// 3. Creates a named function</code></pre>
+        </div>
+        
+        <h3>Function Expression</h3>
+        <div class="code-block">
+            <pre><code>// Function expression - cannot be called before declaration
+// x(5, 5); // Error! x is not defined yet
+
+// Anonymous function expression
+var x = function(a, b) {
+    console.log("Hello");
+    return a * b;
+};
+
+// Now we can call it
+console.log(x(5, 5)); // Output: Hello, then 25
+
+// Named function expression
+var factorial = function fact(n) {
+    if (n <= 1) {
+        return 1;
+    }
+    return n * fact(n - 1); // Can use name 'fact' internally
+};
+
+console.log(factorial(5)); // Output: 120
+
+// Function expression characteristics:
+// 1. Not hoisted (only available after declaration)
+// 2. Function name is optional (anonymous)
+// 3. Assigned to a variable</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="hoisting">
+        <h2>2. Function Hoisting</h2>
+        
+        <div class="info-box">
+            <strong>Hoisting:</strong> Function declarations are moved to the top of their scope during compilation.
+        </div>
+        
+        <h3>How Hoisting Works</h3>
+        <div class="code-block">
+            <pre><code>// This code works because of hoisting
+console.log("Calling hoisted function:");
+hoistedFunction(); // Output: "I'm hoisted!"
+
+function hoistedFunction() {
+    console.log("I'm hoisted!");
+}
+
+// This is how JavaScript sees it after hoisting:
+/*
+function hoistedFunction() {
+    console.log("I'm hoisted!");
+}
+
+console.log("Calling hoisted function:");
+hoistedFunction();
+*/
+
+// Function expressions are NOT hoisted
+console.log("Trying to call non-hoisted:");
+// notHoisted(); // Error! notHoisted is not a function
+
+var notHoisted = function() {
+    console.log("I'm not hoisted!");
+};
+
+// Now it works
+notHoisted(); // Output: "I'm not hoisted!"</code></pre>
+        </div>
+        
+        <h3>Variable Hoisting vs Function Hoisting</h3>
+        <div class="code-block">
+            <pre><code>// Variable declarations are hoisted, but not their values
+console.log(myVar); // undefined (not an error)
+var myVar = 5;
+console.log(myVar); // 5
+
+// This is equivalent to:
+/*
+var myVar; // hoisted declaration
+console.log(myVar); // undefined
+myVar = 5; // assignment stays in place
+console.log(myVar); // 5
+*/
+
+// Function expressions follow variable hoisting rules
+console.log(myFunc); // undefined
+var myFunc = function() {
+    return "Hello";
+};
+console.log(myFunc()); // "Hello"</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="first-class">
+        <h2>3. Functions as First-Class Citizens</h2>
+        
+        <div class="info-box">
+            <strong>First-Class Functions:</strong> Functions can be assigned to variables, passed as arguments, and returned from other functions.
+        </div>
+        
+        <h3>1. Assign Function to Variable</h3>
+        <div class="code-block">
+            <pre><code>// Assign function to variable
+var greet = function(name) {
+    return "Hello " + name;
+};
+
+console.log(greet("Omar")); // Output: "Hello Omar"
+
+// Reassign to another variable
+var sayHello = greet;
+console.log(sayHello("Ali")); // Output: "Hello Ali"</code></pre>
+        </div>
+        
+        <h3>2. Pass Function as Parameter</h3>
+        <div class="code-block">
+            <pre><code>// Function that accepts another function as parameter
+function processUser(name, callback) {
+    console.log("Processing user: " + name);
+    callback(name);
+}
+
+// Different callback functions
+function welcomeUser(name) {
+    console.log("Welcome " + name + "!");
+}
+
+function alertUser(name) {
+    console.log("Alert: " + name + " has logged in");
+}
+
+// Using functions as parameters
+processUser("Omar", welcomeUser);  // Output: Processing user: Omar, Welcome Omar!
+processUser("Ali", alertUser);     // Output: Processing user: Ali, Alert: Ali has logged in</code></pre>
+        </div>
+        
+        <h3>3. Return Function from Function</h3>
+        <div class="code-block">
+            <pre><code>// Function that returns another function
+function createMultiplier(multiplier) {
+    return function(number) {
+        return number * multiplier;
+    };
+}
+
+// Create specific multiplier functions
+var double = createMultiplier(2);
+var triple = createMultiplier(3);
+
+console.log(double(5)); // Output: 10
+console.log(triple(4)); // Output: 12
+
+// Another example - function factory
+function createGreeting(greeting) {
+    return function(name) {
+        return greeting + " " + name + "!";
+    };
+}
+
+var sayHello = createGreeting("Hello");
+var sayHi = createGreeting("Hi");
+
+console.log(sayHello("Omar")); // Output: "Hello Omar!"
+console.log(sayHi("Ali"));     // Output: "Hi Ali!"</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="arguments">
+        <h2>4. The Arguments Object</h2>
+        
+        <div class="info-box">
+            <strong>Arguments Object:</strong> A special array-like object containing all arguments passed to a function.
+        </div>
+        
+        <h3>Function Overloading with Arguments</h3>
+        <div class="code-block">
+            <pre><code>// Multiple function definitions with same name (last one wins)
+function sum(a, b) {
+    return a + b;
+}
+
+function sum(a, b, c) {
+    return a + b + c;
+}
+
+// Only the last definition is used
+console.log(sum(5, 6)); // Output: NaN (because c is undefined)
+
+// Better approach using arguments object
+function sum() {
+    var total = 0;
+    
+    // Loop through all arguments
+    for (var i = 0; i < arguments.length; i++) {
+        total += arguments[i];
+    }
+    
+    return total;
+}
+
+// Now it works with any number of arguments
+console.log(sum(5));        // Output: 5
+console.log(sum(5, 4));     // Output: 9
+console.log(sum(5, 6, 7));  // Output: 18
+console.log(sum());         // Output: 0</code></pre>
+        </div>
+        
+        <h3>Arguments Object Properties</h3>
+        <div class="code-block">
+            <pre><code>function exploreArguments() {
+    console.log("Number of arguments:", arguments.length);
+    console.log("Arguments object:", arguments);
+    console.log("Type of arguments:", typeof arguments);
+    console.log("Is arguments an array?", Array.isArray(arguments)); // false
+    
+    // Access individual arguments
+    for (var i = 0; i < arguments.length; i++) {
+        console.log("Argument " + i + ":", arguments[i]);
+    }
+    
+    // Arguments is array-like but not a real array
+    // arguments.push(100); // Error! No push method
+    
+    // Convert to real array (ES5 way)
+    var argsArray = Array.prototype.slice.call(arguments);
+    console.log("Converted to array:", argsArray);
+    argsArray.push(100); // Now this works
+    console.log("After push:", argsArray);
+}
+
+exploreArguments("hello", 42, true, {name: "Omar"});</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="closures">
+        <h2>5. Closures</h2>
+        
+        <div class="info-box">
+            <strong>Closure:</strong> A function that has access to variables from its outer scope even after the outer function has finished executing.
+        </div>
+        
+        <h3>Basic Closure Example</h3>
+        <div class="code-block">
+            <pre><code>// Outer function with inner function
+function outer() {
+    var count = 0; // Private variable
+    
+    return function inner() {
+        count++; // Access outer variable
+        console.log(count);
+    };
+}
+
+// Create closure instances
+var counterOne = outer();
+var counterTwo = outer();
+
+// Each closure maintains its own copy of variables
+counterOne(); // Output: 1
+counterOne(); // Output: 2
+counterTwo(); // Output: 1
+counterTwo(); // Output: 2
+counterTwo(); // Output: 3
+
+// counterOne and counterTwo have separate count variables</code></pre>
+        </div>
+        
+        <h3>Practical Closure Example - Once Function</h3>
+        <div class="code-block">
+            <pre><code>// Higher-order function that creates a "once" wrapper
+function once(fn) {
+    var done = false; // Private state
+    
+    return function(uName) {
+        if (!done) {
+            done = true;
+            return fn(uName);
+        }
+        // If already called, do nothing
+    };
+}
+
+// Create functions that can only be called once
+var greetOnce = once(function(uName) {
+    console.log("Hello only once " + uName);
+});
+
+var sayHiOnce = once(function() {
+    console.log("Hi once");
+});
+
+// Test the once functionality
+greetOnce("Omar"); // Output: "Hello only once Omar"
+greetOnce("Ali");  // Nothing happens
+greetOnce("Sara"); // Nothing happens
+
+sayHiOnce(); // Output: "Hi once"
+sayHiOnce(); // Nothing happens</code></pre>
+        </div>
+        
+        <h3>Why Closures Are Useful</h3>
+        <div class="code-block">
+            <pre><code>// 1. Data Privacy - variables are not accessible outside
+function createBankAccount(initialBalance) {
+    var balance = initialBalance; // Private variable
+    
+    return {
+        deposit: function(amount) {
+            balance += amount;
+            console.log("Deposited: " + amount + ", Balance: " + balance);
+        },
+        withdraw: function(amount) {
+            if (amount <= balance) {
+                balance -= amount;
+                console.log("Withdrew: " + amount + ", Balance: " + balance);
+            } else {
+                console.log("Insufficient funds");
+            }
+        },
+        getBalance: function() {
+            return balance;
+        }
+    };
+}
+
+var account = createBankAccount(100);
+account.deposit(50);   // Deposited: 50, Balance: 150
+account.withdraw(30);  // Withdrew: 30, Balance: 120
+console.log(account.getBalance()); // 120
+
+// Cannot access balance directly
+console.log(account.balance); // undefined - data is private!</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="iife">
+        <h2>6. IIFE (Immediately Invoked Function Expression)</h2>
+        
+        <div class="info-box">
+            <strong>IIFE:</strong> A function that is executed immediately after it's created. Commonly used to avoid polluting the global scope.
+        </div>
+        
+        <h3>Basic IIFE Pattern</h3>
+        <div class="code-block">
+            <pre><code>// Basic IIFE syntax
+(function() {
+    console.log("IIFE executed immediately!");
+})();
+
+// Alternative syntax (also valid)
+(function() {
+    console.log("Alternative IIFE syntax!");
+}());
+
+// IIFE with parameters
+(function(name, age) {
+    console.log("Hello " + name + ", you are " + age + " years old");
+})("Omar", 28);
+
+// IIFE returning a value
+var result = (function(a, b) {
+    return a + b;
+})(5, 10);
+
+console.log("IIFE result:", result); // Output: IIFE result: 15</code></pre>
+        </div>
+        
+        <h3>IIFE for Private Scope</h3>
+        <div class="code-block">
+            <pre><code>// Without IIFE - pollutes global scope
+var counter = 0;
+var increment = function() {
+    counter++;
+    console.log(counter);
+};
+var decrement = function() {
+    counter--;
+    console.log(counter);
+};
+
+// Global variables: counter, increment, decrement
+
+// With IIFE - keeps variables private
+var counterModule = (function() {
+    var counter = 0; // Private variable
+    
+    return {
+        increment: function() {
+            counter++;
+            console.log(counter);
+        },
+        decrement: function() {
+            counter--;
+            console.log(counter);
+        },
+        getCount: function() {
+            return counter;
+        }
+    };
+})();
+
+// Only counterModule is global, counter is private
+counterModule.increment(); // 1
+counterModule.increment(); // 2
+counterModule.decrement(); // 1
+console.log(counterModule.getCount()); // 1
+
+// console.log(counter); // Error! counter is not accessible</code></pre>
+        </div>
+        
+        <h3>Common IIFE Use Cases</h3>
+        <div class="code-block">
+            <pre><code>// 1. Library/Module pattern
+var MyLibrary = (function() {
+    var privateVar = "secret";
+    
+    function privateFunction() {
+        return "This is private";
+    }
+    
+    return {
+        publicMethod: function() {
+            return "This is public, accessing: " + privateVar;
+        },
+        anotherMethod: function() {
+            return privateFunction();
+        }
+    };
+})();
+
+console.log(MyLibrary.publicMethod()); // "This is public, accessing: secret"
+// console.log(MyLibrary.privateVar); // undefined
+
+// 2. Initialization code
+(function() {
+    // Code that runs once when page loads
+    console.log("Initializing application...");
+    
+    // Setup code here
+    var config = {
+        apiUrl: "https://api.example.com",
+        timeout: 5000
+    };
+    
+    // Initialize components
+    // setupEventListeners();
+    // loadUserData();
+})();</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="this-context">
+        <h2>7. "this" Context and Call/Apply/Bind</h2>
+        
+        <div class="info-box">
+            <strong>"this" Keyword:</strong> Refers to the object that calls the function. Can be changed using call, apply, and bind.
+        </div>
+        
+        <h3>Understanding "this" Context</h3>
+        <div class="code-block">
+            <pre><code>var userName = "Hussein"; // Global variable
+
+var userOne = {
+    userName: "Omar",
+    age: 28,
+    sayHi: function() {
+        console.log("Hello " + this.userName); // "this" refers to the calling object
+    }
+};
+
+var userTwo = {
+    userName: "Kareem",
+    age: 28,
+    greet: function(greeting, sign) {
+        console.log(greeting + " " + this.userName + " " + sign);
+    }
+};
+
+var userThree = {
+    userName: "Ali",
+    age: 28
+};
+
+// Normal function call
+userOne.sayHi(); // Output: "Hello Omar"
+userTwo.greet("Hello", "!"); // Output: "Hello Kareem !"</code></pre>
+        </div>
+        
+        <h3>call() Method</h3>
+        <div class="code-block">
+            <pre><code>// call() - invoke function with specific "this" context
+// Syntax: function.call(thisArg, arg1, arg2, ...)
+
+// Borrow method from userOne and use it with userTwo
+userOne.sayHi.call(userTwo); // Output: "Hello Kareem"
+
+// Borrow method from userOne and use it with userThree
+userOne.sayHi.call(userThree); // Output: "Hello Ali"
+
+// Using call with parameters
+userTwo.greet.call(userThree, "Hi", "##"); // Output: "Hi Ali ##"
+
+// Practical example with Math.max
+var numbers = [14, 66, 299, 6];
+
+// Math.max doesn't accept arrays, but we can use call/apply
+console.log(Math.max.call(null, 14, 66, 299, 6)); // Output: 299
+
+// Real-world example
+var myMath = {
+    max: function(x, y) {
+        if (x > y) return x;
+        return y;
+        // Does not need "this"
+    }
+};
+
+console.log(myMath.max.call(null, 5, 6)); // Output: 6</code></pre>
+        </div>
+        
+        <h3>apply() Method</h3>
+        <div class="code-block">
+            <pre><code>// apply() - same as call, but arguments passed as array
+// Syntax: function.apply(thisArg, [arg1, arg2, ...])
+
+// Same result as call, but with array of arguments
+userTwo.greet.apply(userThree, ["Hola", "!!"]); // Output: "Hola Ali !!"
+
+// Very useful with Math methods and arrays
+var newArr = [14, 66, 299, 6];
+console.log(Math.max.apply(null, newArr)); // Output: 299
+
+// Compare call vs apply for same function
+userTwo.greet.call(userThree, "Hi", "##");        // Individual arguments
+userTwo.greet.apply(userThree, ["Hi", "##"]);     // Array of arguments
+
+// Practical example - finding max in object's array
+var myMath = {
+    num: [1, 5, 10],
+    
+    findMax: function() {
+        var myNums = this.num;
+        return Math.max.apply(null, myNums); // Use "this" to access object property
+    }
+};
+
+console.log(myMath.findMax()); // Output: 10</code></pre>
+        </div>
+        
+        <h3>bind() Method</h3>
+        <div class="code-block">
+            <pre><code>// bind() - creates new function with specific "this" context
+// Syntax: function.bind(thisArg, arg1, arg2, ...)
+
+// Create bound function with preset context
+var greetAli = userTwo.greet.bind(userThree, "Hi", "!");
+greetAli(); // Output: "Hi Ali !"
+
+// Create bound function without preset arguments
+var greetAliFlexible = userTwo.greet.bind(userThree);
+greetAliFlexible("HI", "^^");   // Output: "HI Ali ^^"
+greetAliFlexible("Ahlan", "**"); // Output: "Ahlan Ali **"
+greetAliFlexible("Hola", "$");   // Output: "Hola Ali $"
+
+// Partial application with bind
+var greetAliWithHi = userTwo.greet.bind(userThree, "Hi");
+greetAliWithHi("!");  // Output: "Hi Ali !"
+greetAliWithHi("?");  // Output: "Hi Ali ?"
+
+// Bind vs call/apply
+userTwo.greet.call(userThree, "Hello", "!");    // Executes immediately
+userTwo.greet.apply(userThree, ["Hello", "!"]);  // Executes immediately
+var boundGreet = userTwo.greet.bind(userThree, "Hello", "!"); // Returns function
+boundGreet(); // Execute when needed</code></pre>
+        </div>
+    </div>
+
+    <!-- PART 2: ES6 MODERN FEATURES -->
+    <div class="section" id="let-const">
+        <h2>8. let, const vs var</h2>
+        
+        <div class="info-box">
+            <strong>ES6 Variables:</strong> let and const provide block scope and better behavior than var.
+        </div>
+        
+        <h3>var - Function Scoped (ES5)</h3>
+        <div class="code-block">
+            <pre><code>// var has function scope, not block scope
+var x = 5;
+
+if (true) {
+    var x = 20; // Same variable, overwrites outer x
+    console.log("Inside if: " + x); // Output: Inside if: 20
+}
+console.log("Outside if: " + x); // Output: Outside if: 20 (not wanted behavior)
+
+function scopeFun() {
+    var x = 15; // Function scoped - different from global x
+    console.log(x); // Output: 15
+}
+scopeFun();
+console.log("After function: " + x); // Output: After function: 20
+
+// var is hoisted
+console.log(hoistedVar); // Output: undefined (not error)
+var hoistedVar = "I'm hoisted";
+console.log(hoistedVar); // Output: "I'm hoisted"</code></pre>
+        </div>
+        
+        <h3>let - Block Scoped (ES6)</h3>
+        <div class="code-block">
+            <pre><code>// let has block scope
+let y = 5;
+
+if (true) {
+    let y = 20; // Different variable, block scoped
+    console.log("Inside if: " + y); // Output: Inside if: 20
+}
+console.log("Outside if: " + y); // Output: Outside if: 5 (original value preserved)
+
+// let cannot be redeclared in same scope
+let z = 10;
+// let z = 20; // Error! Identifier 'z' has already been declared
+
+// let is not hoisted (temporal dead zone)
+// console.log(notHoistedLet); // Error! Cannot access before initialization
+let notHoistedLet = 5;
+
+// Block scope example
+for (let i = 0; i < 3; i++) {
+    // i is only available inside this block
+    console.log("Loop iteration:", i);
+}
+// console.log(i); // Error! i is not defined outside block</code></pre>
+        </div>
+        
+        <h3>const - Block Scoped and Immutable (ES6)</h3>
+        <div class="code-block">
+            <pre><code>// const must be initialized and cannot be reassigned
+const PI = 3.14159;
+// PI = 3.14; // Error! Assignment to constant variable
+
+// const with objects and arrays - content can change
+const myArr = [2, 6];
+myArr.push(8); // This is allowed - modifying content
+console.log(myArr); // Output: [2, 6, 8]
+
+const user = {
+    userName: "Ahmed"
+};
+user.userName = "Ali"; // This is allowed - modifying property
+user.age = 25;         // This is allowed - adding property
+console.log(user); // Output: {userName: "Ali", age: 25}
+
+// But reassignment is not allowed
+// user = {}; // Error! Assignment to constant variable
+
+// const is block scoped like let
+if (true) {
+    const blockConst = "I'm in a block";
+    console.log(blockConst); // Works fine
+}
+// console.log(blockConst); // Error! blockConst is not defined</code></pre>
+        </div>
+        
+        <h3>When to Use Each</h3>
+        <div class="code-block">
+            <pre><code>// Use const by default (for values that won't be reassigned)
+const API_URL = "https://api.example.com";
+const MAX_USERS = 100;
+const userList = []; // Can still push/pop items
+
+// Use let when you need to reassign the variable
+let counter = 0;
+let currentUser = null;
+
+for (let i = 0; i < 5; i++) {
+    counter += i;
+}
+
+if (userList.length > 0) {
+    currentUser = userList[0];
+}
+
+// Avoid var in modern JavaScript (ES6+)
+// Only use var if you specifically need function scope or 
+// working with older browsers that don't support ES6</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="template-literals">
+        <h2>9. Template Literals</h2>
+        
+        <div class="info-box">
+            <strong>Template Literals:</strong> String literals with embedded expressions, multiline support, and cleaner syntax.
+        </div>
+        
+        <h3>Old Way vs New Way</h3>
+        <div class="code-block">
+            <pre><code>let uName = "Omar";
+let age = 28;
+
+// Old way (ES5) - string concatenation
+let helloString = "Hello" + " " + uName + " " + "Your age is: " + age;
+console.log(helloString); // Output: Hello Omar Your age is: 28
+
+// New way (ES6) - template literals with backticks
+let newStr = `Hello ${uName} Your age is ${age + 5}`;
+console.log(newStr); // Output: Hello Omar Your age is: 33
+
+// Expressions inside ${} are evaluated
+let mathResult = `5 + 3 = ${5 + 3}`;
+console.log(mathResult); // Output: 5 + 3 = 8</code></pre>
+        </div>
+        
+        <h3>Multiline Strings</h3>
+        <div class="code-block">
+            <pre><code>// Old way - multiline strings with concatenation
+let oldMultiline = "This is line 1\n" +
+                   "This is line 2\n" +
+                   "This is line 3";
+
+// New way - template literals preserve line breaks
+let newMultiline = `This is line 1
+This is line 2
+This is line 3`;
+
+console.log(newMultiline);
+
+// Practical example - HTML generation
+let userName = "Omar";
+let userEmail = "omar@example.com";
+
+let userCard = `
+<div class="user-card">
+    <h3>${userName}</h3>
+    <p>Email: ${userEmail}</p>
+    <p>Joined: ${new Date().getFullYear()}</p>
+</div>`;
+
+console.log(userCard);</code></pre>
+        </div>
+        
+        <h3>Advanced Template Literal Features</h3>
+        <div class="code-block">
+            <pre><code>// Function calls inside template literals
+function formatDate(date) {
+    return date.toLocaleDateString();
+}
+
+let message = `Today is ${formatDate(new Date())}`;
+console.log(message);
+
+// Conditional expressions
+let user = { name: "Omar", isAdmin: true };
+let greeting = `Hello ${user.name}, you are ${user.isAdmin ? 'an admin' : 'a user'}`;
+console.log(greeting); // Output: Hello Omar, you are an admin
+
+// Nested template literals
+let products = ["laptop", "mouse", "keyboard"];
+let productList = `
+Products:
+${products.map(product => `- ${product}`).join('\n')}
+`;
+console.log(productList);
+
+// Escaping backticks if needed
+let codeExample = `Use backticks \` for template literals`;
+console.log(codeExample);</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="arrow-functions">
+        <h2>10. Arrow Functions</h2>
+        
+        <div class="info-box">
+            <strong>Arrow Functions:</strong> Shorter syntax for writing functions, introduced in ES6.
+        </div>
+        
+        <h3>Basic Arrow Function Syntax</h3>
+        <div class="code-block">
+            <pre><code>// Traditional function
+function add(a, b) {
+    return a + b;
+}
+
+// Arrow function - full syntax
+const addArrow = (a, b) => {
+    return a + b;
+};
+
+console.log(add(5, 6));      // Output: 11
+console.log(addArrow(5, 6)); // Output: 11
+
+// Arrow function - short syntax (single expression)
+const newAdd = (x, y) => x + y;
+console.log(newAdd(7, 8)); // Output: 15
+
+// Single parameter - parentheses optional
+const squareFn = x => x * x;
+console.log(squareFn(5)); // Output: 25
+
+// Single parameter with parentheses (also valid)
+const cubeFn = (x) => x * x * x;
+console.log(cubeFn(3)); // Output: 27
+
+// No parameters - parentheses required
+const sayHello = () => "Hello World";
+console.log(sayHello()); // Output: "Hello World"
+
+// Single parameter, single expression
+const consoleHi = uName => console.log(`Hello ${uName}`);
+consoleHi("Omar"); // Output: "Hello Omar"</code></pre>
+        </div>
+        
+        <h3>When to Use Arrow Functions</h3>
+        <div class="code-block">
+            <pre><code>// Good for short, simple functions
+const numbers = [1, 2, 3, 4, 5];
+
+// Traditional function
+const doubled1 = numbers.map(function(num) {
+    return num * 2;
+});
+
+// Arrow function - much cleaner
+const doubled2 = numbers.map(num => num * 2);
+
+console.log(doubled1); // [2, 4, 6, 8, 10]
+console.log(doubled2); // [2, 4, 6, 8, 10]
+
+// Filtering with arrow functions
+const evenNumbers = numbers.filter(num => num % 2 === 0);
+console.log(evenNumbers); // [2, 4]
+
+// Multiple operations
+const processedNumbers = numbers
+    .filter(num => num > 2)
+    .map(num => num * 3)
+    .filter(num => num < 20);
+
+console.log(processedNumbers); // [9, 12, 15]</code></pre>
+        </div>
+        
+        <h3>Arrow Function Variations</h3>
+        <div class="code-block">
+            <pre><code>// Multiple lines - need braces and return
+const complexOperation = (a, b) => {
+    const sum = a + b;
+    const product = a * b;
+    return `Sum: ${sum}, Product: ${product}`;
+};
+
+console.log(complexOperation(3, 4)); // "Sum: 7, Product: 12"
+
+// Returning objects - wrap in parentheses
+const createUser = (name, age) => ({
+    name: name,
+    age: age,
+    isActive: true
+});
+
+console.log(createUser("Omar", 28)); // {name: "Omar", age: 28, isActive: true}
+
+// Immediately invoked arrow function
+const result = ((x, y) => x + y)(5, 10);
+console.log(result); // Output: 15
+
+// Arrow function as callback
+setTimeout(() => {
+    console.log("This runs after 1 second");
+}, 1000);
+
+// Arrow function with default parameters
+const greetUser = (name = "Guest") => `Hello ${name}!`;
+console.log(greetUser());        // "Hello Guest!"
+console.log(greetUser("Omar"));  // "Hello Omar!"</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="arrow-this">
+        <h2>11. Arrow Functions and "this" Context</h2>
+        
+        <div class="info-box">
+            <strong>Important Difference:</strong> Arrow functions don't have their own "this" - they inherit it from the enclosing scope.
+        </div>
+        
+        <h3>Traditional Functions vs Arrow Functions with "this"</h3>
+        <div class="code-block">
+            <pre><code>// Problem with traditional functions and "this"
+function Person() {
+    this.age = 0;
+
+    setInterval(function() {
+        this.age++; // "this" refers to global object (window), not Person!
+        console.log(this.age); // NaN or undefined behavior
+    }, 1000);
+}
+
+// This won't work as expected
+// new Person();
+
+// Solution 1: Store "this" in variable (ES5 way)
+function PersonES5() {
+    this.age = 0;
+    var self = this; // Store reference to correct "this"
+
+    setInterval(function() {
+        self.age++; // Use stored reference
+        console.log(self.age); // Works correctly: 1, 2, 3...
+    }, 1000);
+}
+
+// Solution 2: Arrow functions (ES6 way)
+function PersonES6() {
+    this.age = 0;
+
+    setInterval(() => {
+        this.age++; // Arrow function inherits "this" from PersonES6
+        console.log(this.age); // Works correctly: 1, 2, 3...
+    }, 1000);
+}
+
+// Test the ES6 version
+// new PersonES6();</code></pre>
+        </div>
+        
+        <h3>When NOT to Use Arrow Functions</h3>
+        <div class="code-block">
+            <pre><code>// DON'T use arrow functions as object methods
+const userBad = {
+    name: "Omar",
+    age: 28,
+    greet: () => {
+        console.log("Hello " + this.name); // "this" is not the user object!
+    }
+};
+
+userBad.greet(); // Output: "Hello undefined"
+
+// DO use traditional functions as object methods
+const userGood = {
+    name: "Omar",
+    age: 28,
+    greet: function() {
+        console.log("Hello " + this.name); // "this" correctly refers to user object
+    },
+    
+    // ES6 method shorthand (also good)
+    greetShort() {
+        console.log("Hi " + this.name);
+    }
+};
+
+userGood.greet();      // Output: "Hello Omar"
+userGood.greetShort(); // Output: "Hi Omar"
+
+// DON'T use arrow functions for constructors
+// const PersonConstructor = () => {}; // Error! Arrow functions can't be constructors
+// new PersonConstructor(); // TypeError</code></pre>
+        </div>
+        
+        <h3>Practical Example - Event Handlers</h3>
+        <div class="code-block">
+            <pre><code>// Example: Class with event handling
+class ClickCounter {
+    constructor() {
+        this.count = 0;
+        this.button = null;
+    }
+    
+    init() {
+        this.button = document.createElement('button');
+        this.button.textContent = 'Click me';
+        document.body.appendChild(this.button);
+        
+        // Problem with traditional function
+        this.button.addEventListener('click', function() {
+            this.count++; // "this" refers to button, not ClickCounter!
+            console.log(this.count); // undefined or NaN
+        });
+        
+        // Solution with arrow function
+        this.button.addEventListener('click', () => {
+            this.count++; // "this" correctly refers to ClickCounter instance
+            console.log(`Clicked ${this.count} times`); // Works correctly
+        });
+    }
+}
+
+// Usage
+const counter = new ClickCounter();
+counter.init();
+
+// Alternative ES5 solution
+class ClickCounterES5 {
+    constructor() {
+        this.count = 0;
+        this.button = null;
+    }
+    
+    init() {
+        var self = this; // Store reference
+        this.button = document.createElement('button');
+        this.button.textContent = 'Click me';
+        document.body.appendChild(this.button);
+        
+        this.button.addEventListener('click', function() {
+            self.count++; // Use stored reference
+            console.log(`Clicked ${self.count} times`);
+        });
+    }
+}</code></pre>
+        </div>
+        
+        <h3>Summary: Arrow Functions vs Traditional Functions</h3>
+        <div class="code-block">
+            <pre><code>// Use arrow functions for:
+// 1. Short, simple functions
+const double = x => x * 2;
+
+// 2. Array methods (map, filter, reduce, etc.)
+const numbers = [1, 2, 3];
+const squared = numbers.map(n => n * n);
+
+// 3. Callbacks where you want to preserve "this"
+setTimeout(() => {
+    console.log("Arrow function callback");
+}, 1000);
+
+// 4. Event handlers in classes/objects where you need correct "this"
+class MyClass {
+    method() {
+        document.addEventListener('click', () => {
+            // "this" refers to MyClass instance
+        });
+    }
+}
+
+// Use traditional functions for:
+// 1. Object methods
+const obj = {
+    name: "Omar",
+    greet: function() { return `Hello ${this.name}`; }
+};
+
+// 2. When you need dynamic "this" binding
+function dynamicThis() {
+    console.log(this); // "this" depends on how function is called
+}
+
+// 3. Constructor functions
+function Person(name) {
+    this.name = name;
+}
+
+// 4. When you need the arguments object
+function withArguments() {
+    console.log(arguments); // Available in traditional functions
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>Summary</h2>
+        
+        <div class="info-box">
+            <strong>Key Takeaways:</strong> Modern JavaScript provides better tools for function creation, variable declaration, and string manipulation.
+        </div>
+        
+        <h3>Functions</h3>
+        <ul>
+            <li><strong>Function statements</strong> are hoisted, <strong>function expressions</strong> are not</li>
+            <li>Functions are <strong>first-class citizens</strong> - can be assigned, passed, and returned</li>
+            <li><strong>Arguments object</strong> allows flexible parameter handling</li>
+            <li><strong>Closures</strong> provide data privacy and persistent state</li>
+            <li><strong>IIFE</strong> creates immediate execution and private scope</li>
+            <li><strong>call/apply/bind</strong> control the "this" context</li>
+        </ul>
+        
+        <h3>ES6 Features</h3>
+        <ul>
+            <li><strong>let/const</strong> provide block scope and better behavior than var</li>
+            <li><strong>Template literals</strong> make string creation cleaner and more powerful</li>
+            <li><strong>Arrow functions</strong> offer shorter syntax and lexical "this" binding</li>
+            <li>Choose the right tool for each situation</li>
+        </ul>
+        
+        <h3>Best Practices</h3>
+        <ul>
+            <li>Use <code>const</code> by default, <code>let</code> when reassignment needed</li>
+            <li>Prefer arrow functions for short callbacks and array methods</li>
+            <li>Use traditional functions for object methods and constructors</li>
+            <li>Use template literals for string interpolation and multiline strings</li>
+            <li>Understand closure patterns for data privacy</li>
+        </ul>
+    </div>
+
+</body>
+</html>

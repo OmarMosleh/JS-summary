@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript ES5 - DOM Manipulation & Events</title>
+    <link rel="stylesheet" href="../shared-styles.css">
+</head>
+<body>
+    <h1>JavaScript ES5 - DOM Manipulation & Events</h1>
+    
+    <div class="section toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><strong>Part 1: DOM Manipulation</strong></li>
+            <li><a href="#selectors">1. CSS Selectors & Getters</a></li>
+            <li><a href="#manipulation">2. DOM Manipulation (Edit, Create, Remove)</a></li>
+            <li><a href="#styling">3. Styling (Properties and Classes)</a></li>
+            <li><a href="#creating">4. Creating Elements & appendChild</a></li>
+            <li><a href="#inserting">5. insertAdjacentElement</a></li>
+            <li><a href="#removing">6. Removing Elements</a></li>
+            <li><strong>Part 2: Events</strong></li>
+            <li><a href="#event-methods">7. Three Ways to Write Events</a></li>
+            <li><a href="#event-object">7.1. Event Object (e) and "this" Keyword</a></li>
+            <li><a href="#event-types">8. Mouse, Keyboard & Popular Events</a></li>
+            <li><a href="#event-registration">9. Direct vs Delegation Registration</a></li>
+            <li><a href="#propagation">10. Event Propagation (Capture & Bubble)</a></li>
+            <li><a href="#cancelling">11. Event Cancelling</a></li>
+        </ul>
+    </div>
+
+    <!-- PART 1: DOM MANIPULATION -->
+    <div class="section" id="selectors">
+        <h2>1. CSS Selectors & Getters</h2>
+        
+        <div class="info-box">
+            <strong>Modern Selection Methods:</strong> Beyond getElementById, we have powerful CSS selector methods.
+        </div>
+        
+        <h3>Sample HTML Structure</h3>
+        <div class="code-block">
+            <pre><code>&lt;div class="container"&gt;
+    &lt;h2 id="title"&gt;Main Title&lt;/h2&gt;
+    &lt;p class="intro"&gt;Introduction paragraph&lt;/p&gt;
+    &lt;ul class="menu"&gt;
+        &lt;li class="menu-item active"&gt;Home&lt;/li&gt;
+        &lt;li class="menu-item"&gt;About&lt;/li&gt;
+        &lt;li class="menu-item"&gt;Contact&lt;/li&gt;
+    &lt;/ul&gt;
+    &lt;div class="content"&gt;
+        &lt;p&gt;Content paragraph 1&lt;/p&gt;
+        &lt;p&gt;Content paragraph 2&lt;/p&gt;
+    &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+        
+        <h3>Basic Element Selection</h3>
+        <div class="code-block">
+            <pre><code>// By ID - returns single element or null
+var title = document.getElementById('title');
+console.log('Title text:', title.textContent); // "Main Title"
+
+// By tag name - returns HTMLCollection
+var paragraphs = document.getElementsByTagName('p');
+console.log('Number of paragraphs:', paragraphs.length); // 3
+
+// By class name - returns HTMLCollection (IE9+)
+if (document.getElementsByClassName) {
+    var menuItems = document.getElementsByClassName('menu-item');
+    console.log('Menu items:', menuItems.length); // 3
+}
+
+// By name attribute - returns NodeList
+var namedElements = document.getElementsByName('username');
+console.log('Named elements:', namedElements.length);</code></pre>
+        </div>
+        
+        <h3>CSS Selector Methods (Modern)</h3>
+        <div class="code-block">
+            <pre><code>// querySelector - returns first matching element or null
+var firstMenuItem = document.querySelector('.menu-item');
+console.log('First menu item:', firstMenuItem.textContent); // "Home"
+
+var activeItem = document.querySelector('.menu-item.active');
+console.log('Active item:', activeItem.textContent); // "Home"
+
+// querySelectorAll - returns NodeList (static)
+var allMenuItems = document.querySelectorAll('.menu-item');
+console.log('All menu items:', allMenuItems.length); // 3
+
+var contentParagraphs = document.querySelectorAll('.content p');
+console.log('Content paragraphs:', contentParagraphs.length); // 2
+
+// Complex selectors
+var secondMenuItem = document.querySelector('.menu .menu-item:nth-child(2)');
+console.log('Second menu item:', secondMenuItem.textContent); // "About"</code></pre>
+        </div>
+        
+        <h3>Practical Selection Examples</h3>
+        <div class="code-block">
+            <pre><code>// Select all paragraphs in container
+var containerParas = document.querySelectorAll('.container p');
+for (var i = 0; i &lt; containerParas.length; i++) {
+    console.log('Paragraph ' + i + ':', containerParas[i].textContent);
+}
+
+// Select direct children only
+var directChildren = document.querySelectorAll('.container > *');
+console.log('Direct children of container:', directChildren.length);
+
+// Select by attribute
+var listItems = document.querySelectorAll('li[class]');
+console.log('List items with class:', listItems.length);
+
+// Fallback for older browsers
+function selectByClass(className) {
+    if (document.getElementsByClassName) {
+        return document.getElementsByClassName(className);
+    } else {
+        // Fallback for IE8 and below
+        var all = document.getElementsByTagName('*');
+        var result = [];
+        for (var i = 0; i &lt; all.length; i++) {
+            if (all[i].className.indexOf(className) !== -1) {
+                result.push(all[i]);
+            }
+        }
+        return result;
+    }
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="manipulation">
+        <h2>2. DOM Manipulation (Edit, Create, Remove)</h2>
+        
+        <h3>Editing Element Content</h3>
+        <div class="code-block">
+            <pre><code>// Get element
+var title = document.getElementById('title');
+
+// Change text content
+title.textContent = 'New Title Text';
+
+// Change HTML content (be careful with user input)
+title.innerHTML = 'Title with &lt;em&gt;emphasis&lt;/em&gt;';
+
+// Change attributes
+title.setAttribute('class', 'main-title');
+title.setAttribute('data-section', 'header');
+
+// Remove attributes
+title.removeAttribute('data-section');
+
+// Get attribute values
+var titleClass = title.getAttribute('class');
+console.log('Title class:', titleClass);</code></pre>
+        </div>
+        
+        <h3>Working with Form Elements</h3>
+        <div class="code-block">
+            <pre><code>// Sample form HTML
+// &lt;input type="text" id="username" value="john"&gt;
+// &lt;select id="country"&gt;&lt;option value="us"&gt;USA&lt;/option&gt;&lt;/select&gt;
+// &lt;input type="checkbox" id="subscribe" checked&gt;
+
+var usernameField = document.getElementById('username');
+var countrySelect = document.getElementById('country');
+var subscribeCheck = document.getElementById('subscribe');
+
+// Get and set form values
+console.log('Username:', usernameField.value); // "john"
+usernameField.value = 'jane';
+
+console.log('Country:', countrySelect.value); // "us"
+countrySelect.value = 'uk';
+
+console.log('Subscribed:', subscribeCheck.checked); // true
+subscribeCheck.checked = false;
+
+// Disable/enable form elements
+usernameField.disabled = true;
+usernameField.disabled = false;</code></pre>
+        </div>
+        
+        <h3>Editing Multiple Elements</h3>
+        <div class="code-block">
+            <pre><code>// Change all menu items
+var menuItems = document.querySelectorAll('.menu-item');
+for (var i = 0; i &lt; menuItems.length; i++) {
+    var item = menuItems[i];
+    item.textContent = 'Menu Item ' + (i + 1);
+    item.setAttribute('data-index', i);
+}
+
+// Update all paragraphs in content
+var contentParas = document.querySelectorAll('.content p');
+for (var i = 0; i &lt; contentParas.length; i++) {
+    contentParas[i].innerHTML = '&lt;strong&gt;Updated:&lt;/strong&gt; ' + contentParas[i].textContent;
+}</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="styling">
+        <h2>3. Styling (Properties and Classes)</h2>
+        
+        <h3>CSS Properties</h3>
+        <div class="code-block">
+            <pre><code>var title = document.getElementById('title');
+
+// Set individual CSS properties
+title.style.color = 'blue';
+title.style.fontSize = '24px';
+title.style.backgroundColor = '#f0f0f0';
+title.style.padding = '10px';
+title.style.border = '2px solid red';
+
+// CSS properties with hyphens become camelCase
+title.style.marginTop = '20px';
+title.style.borderRadius = '5px';
+title.style.textAlign = 'center';
+
+// Get computed styles (read-only)
+var computedStyle = window.getComputedStyle ? 
+    window.getComputedStyle(title) : 
+    title.currentStyle; // IE fallback
+
+console.log('Computed color:', computedStyle.color);
+console.log('Computed font size:', computedStyle.fontSize);</code></pre>
+        </div>
+        
+        <h3>Working with CSS Classes</h3>
+        <div class="code-block">
+            <pre><code>var menuItem = document.querySelector('.menu-item');
+
+// Get current class
+console.log('Current class:', menuItem.className); // "menu-item active"
+
+// Set entire class string
+menuItem.className = 'menu-item highlighted';
+
+// Add class (manual method)
+function addClass(element, className) {
+    if (element.className.indexOf(className) === -1) {
+        element.className += (element.className ? ' ' : '') + className;
+    }
+}
+
+// Remove class (manual method)
+function removeClass(element, className) {
+    var regex = new RegExp('\\b' + className + '\\b', 'g');
+    element.className = element.className.replace(regex, '').replace(/\s+/g, ' ').trim();
+}
+
+// Check if has class
+function hasClass(element, className) {
+    return element.className.indexOf(className) !== -1;
+}
+
+// Usage examples
+addClass(menuItem, 'selected');
+console.log('Has selected class:', hasClass(menuItem, 'selected')); // true
+removeClass(menuItem, 'active');
+console.log('Classes after removal:', menuItem.className);</code></pre>
+        </div>
+        
+        <h3>Modern classList (IE10+)</h3>
+        <div class="code-block">
+            <pre><code>// Modern browsers support classList
+var menuItem = document.querySelector('.menu-item');
+
+if (menuItem.classList) {
+    // Add class
+    menuItem.classList.add('highlighted');
+    
+    // Remove class
+    menuItem.classList.remove('active');
+    
+    // Toggle class
+    menuItem.classList.toggle('selected');
+    
+    // Check if has class
+    console.log('Has highlighted:', menuItem.classList.contains('highlighted'));
+    
+    // Replace class
+    menuItem.classList.replace('highlighted', 'important');
+} else {
+    // Fallback for older browsers
+    addClass(menuItem, 'highlighted');
+}</code></pre>
+        </div>
+        
+        <h3>Styling Multiple Elements</h3>
+        <div class="code-block">
+            <pre><code>// Style all menu items
+var menuItems = document.querySelectorAll('.menu-item');
+for (var i = 0; i &lt; menuItems.length; i++) {
+    var item = menuItems[i];
+    item.style.padding = '8px 12px';
+    item.style.margin = '2px';
+    item.style.backgroundColor = '#e0e0e0';
+    item.style.borderRadius = '3px';
+    item.style.cursor = 'pointer';
+}
+
+// Add hover effect using classes
+function addHoverEffect(elements) {
+    for (var i = 0; i &lt; elements.length; i++) {
+        elements[i].onmouseover = function() {
+            addClass(this, 'hover');
+        };
+        elements[i].onmouseout = function() {
+            removeClass(this, 'hover');
+        };
+    }
+}
+
+addHoverEffect(menuItems);</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="creating">
+        <h2>4. Creating Elements & appendChild</h2>
+        
+        <h3>Creating Elements</h3>
+        <div class="code-block">
+            <pre><code>// Create new elements
+var newDiv = document.createElement('div');
+var newParagraph = document.createElement('p');
+var newLink = document.createElement('a');
+
+// Set properties and content
+newDiv.className = 'new-section';
+newDiv.id = 'dynamic-section';
+
+newParagraph.textContent = 'This is a dynamically created paragraph';
+newParagraph.style.color = 'green';
+
+newLink.textContent = 'Click me';
+newLink.href = '#';
+newLink.setAttribute('target', '_blank');
+
+// Create text nodes
+var textNode = document.createTextNode('Some plain text');
+
+// Create comment
+var comment = document.createComment('This is a comment');</code></pre>
+        </div>
+        
+        <h3>appendChild Method</h3>
+        <div class="code-block">
+            <pre><code>// Get container
+var container = document.querySelector('.container');
+
+// Append elements to container
+container.appendChild(newDiv);
+newDiv.appendChild(newParagraph);
+newDiv.appendChild(newLink);
+
+// Add text node
+newDiv.appendChild(textNode);
+
+// Create and append list
+var newList = document.createElement('ul');
+newList.className = 'dynamic-list';
+
+for (var i = 1; i &lt;= 3; i++) {
+    var listItem = document.createElement('li');
+    listItem.textContent = 'Dynamic Item ' + i;
+    listItem.setAttribute('data-item', i);
+    newList.appendChild(listItem);
+}
+
+container.appendChild(newList);</code></pre>
+        </div>
+        
+        <h3>Building Complex Structures</h3>
+        <div class="code-block">
+            <pre><code>// Create a card component
+function createCard(title, content, buttonText) {
+    var card = document.createElement('div');
+    card.className = 'card';
+    
+    var cardHeader = document.createElement('div');
+    cardHeader.className = 'card-header';
+    
+    var cardTitle = document.createElement('h3');
+    cardTitle.textContent = title;
+    cardHeader.appendChild(cardTitle);
+    
+    var cardBody = document.createElement('div');
+    cardBody.className = 'card-body';
+    
+    var cardContent = document.createElement('p');
+    cardContent.textContent = content;
+    cardBody.appendChild(cardContent);
+    
+    if (buttonText) {
+        var cardButton = document.createElement('button');
+        cardButton.textContent = buttonText;
+        cardButton.className = 'btn';
+        cardBody.appendChild(cardButton);
+    }
+    
+    card.appendChild(cardHeader);
+    card.appendChild(cardBody);
+    
+    return card;
+}
+
+// Usage
+var myCard = createCard('Card Title', 'This is card content', 'Click Me');
+document.body.appendChild(myCard);</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="inserting">
+        <h2>5. insertAdjacentElement</h2>
+        
+        <h3>Insert Positions</h3>
+        <div class="code-block">
+            <pre><code>// Reference element
+var title = document.getElementById('title');
+
+// Create elements to insert
+var beforeTitle = document.createElement('p');
+beforeTitle.textContent = 'Before the title';
+
+var afterTitle = document.createElement('p');
+afterTitle.textContent = 'After the title';
+
+var insideStart = document.createElement('span');
+insideStart.textContent = '[Start] ';
+
+var insideEnd = document.createElement('span');
+insideEnd.textContent = ' [End]';
+
+// Insert at different positions
+title.insertAdjacentElement('beforebegin', beforeTitle); // Before title element
+title.insertAdjacentElement('afterbegin', insideStart);  // Inside title, at start
+title.insertAdjacentElement('beforeend', insideEnd);     // Inside title, at end
+title.insertAdjacentElement('afterend', afterTitle);    // After title element</code></pre>
+        </div>
+        
+        <h3>Practical Examples</h3>
+        <div class="code-block">
+            <pre><code>// Add element before first menu item
+var firstMenuItem = document.querySelector('.menu-item');
+var newMenuItem = document.createElement('li');
+newMenuItem.className = 'menu-item';
+newMenuItem.textContent = 'First Item';
+firstMenuItem.insertAdjacentElement('beforebegin', newMenuItem);
+
+// Add element after last menu item
+var lastMenuItem = document.querySelector('.menu-item:last-child');
+var anotherMenuItem = document.createElement('li');
+anotherMenuItem.className = 'menu-item';
+anotherMenuItem.textContent = 'Last Item';
+lastMenuItem.insertAdjacentElement('afterend', anotherMenuItem);
+
+// Insert at beginning of container
+var container = document.querySelector('.container');
+var headerDiv = document.createElement('div');
+headerDiv.className = 'header';
+headerDiv.textContent = 'Page Header';
+container.insertAdjacentElement('afterbegin', headerDiv);
+
+// Insert at end of container
+var footerDiv = document.createElement('div');
+footerDiv.className = 'footer';
+footerDiv.textContent = 'Page Footer';
+container.insertAdjacentElement('beforeend', footerDiv);</code></pre>
+        </div>
+        
+        <h3>Alternative Insert Methods</h3>
+        <div class="code-block">
+            <pre><code>// insertBefore (older method)
+var menu = document.querySelector('.menu');
+var newItem = document.createElement('li');
+newItem.textContent = 'Inserted Item';
+newItem.className = 'menu-item';
+
+// Insert before second menu item
+var secondItem = menu.children[1];
+menu.insertBefore(newItem, secondItem);
+
+// Insert as first child (insertBefore with firstChild)
+var firstItem = document.createElement('li');
+firstItem.textContent = 'Very First Item';
+firstItem.className = 'menu-item';
+menu.insertBefore(firstItem, menu.firstChild);
+
+// Insert as last child (same as appendChild)
+var lastItem = document.createElement('li');
+lastItem.textContent = 'Very Last Item';
+lastItem.className = 'menu-item';
+menu.insertBefore(lastItem, null); // null means append at end</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="removing">
+        <h2>6. Removing Elements</h2>
+        
+        <h3>removeChild Method</h3>
+        <div class="code-block">
+            <pre><code>// Remove specific menu item
+var menu = document.querySelector('.menu');
+var secondMenuItem = menu.children[1];
+
+// Remove child from parent
+menu.removeChild(secondMenuItem);
+
+// Remove all children from an element
+function removeAllChildren(parent) {
+    while (parent.firstChild) {
+        parent.removeChild(parent.firstChild);
+    }
+}
+
+// Usage
+var contentDiv = document.querySelector('.content');
+removeAllChildren(contentDiv);</code></pre>
+        </div>
+        
+        <h3>Modern remove() Method</h3>
+        <div class="code-block">
+            <pre><code>// Modern browsers support element.remove()
+var elementToRemove = document.querySelector('.menu-item.active');
+
+if (elementToRemove.remove) {
+    // Modern method
+    elementToRemove.remove();
+} else {
+    // Fallback for older browsers
+    elementToRemove.parentNode.removeChild(elementToRemove);
+}
+
+// Remove multiple elements
+var allMenuItems = document.querySelectorAll('.menu-item');
+for (var i = 0; i &lt; allMenuItems.length; i++) {
+    if (allMenuItems[i].remove) {
+        allMenuItems[i].remove();
+    } else {
+        allMenuItems[i].parentNode.removeChild(allMenuItems[i]);
+    }
+}</code></pre>
+        </div>
+        
+        <h3>Conditional Removal</h3>
+        <div class="code-block">
+            <pre><code>// Remove elements based on conditions
+function removeElementsByClass(className) {
+    var elements = document.querySelectorAll('.' + className);
+    for (var i = 0; i &lt; elements.length; i++) {
+        if (elements[i].remove) {
+            elements[i].remove();
+        } else {
+            elements[i].parentNode.removeChild(elements[i]);
+        }
+    }
+}
+
+// Remove empty paragraphs
+function removeEmptyParagraphs() {
+    var paragraphs = document.querySelectorAll('p');
+    for (var i = 0; i &lt; paragraphs.length; i++) {
+        var p = paragraphs[i];
+        if (!p.textContent.trim()) {
+            if (p.remove) {
+                p.remove();
+            } else {
+                p.parentNode.removeChild(p);
+            }
+        }
+    }
+}
+
+// Remove by index
+function removeMenuItemByIndex(index) {
+    var menu = document.querySelector('.menu');
+    var item = menu.children[index];
+    if (item) {
+        menu.removeChild(item);
+    }
+}
+
+removeMenuItemByIndex(0); // Remove first menu item</code></pre>
+        </div>
+    </div>
+
+    <!-- PART 2: EVENTS -->
+    <div class="section" id="event-methods">
+        <h2>7. Three Ways to Write Events</h2>
+        
+        <div class="info-box">
+            <strong>Event Handling Evolution:</strong> From HTML attributes to modern addEventListener.
+        </div>
+        
+        <h3>Method 1: HTML Attribute Events</h3>
+        <div class="code-block">
+            <pre><code>&lt;!-- HTML event attributes --&gt;
+&lt;button onclick="alert('Button clicked!')"&gt;Click Me&lt;/button&gt;
+&lt;button onclick="handleClick()"&gt;Call Function&lt;/button&gt;
+&lt;input type="text" onkeyup="validateInput(this)"&gt;
+&lt;div onmouseover="this.style.backgroundColor='yellow'"&gt;Hover me&lt;/div&gt;
+
+&lt;script&gt;
+function handleClick() {
+    console.log('Button was clicked via HTML attribute');
+}
+
+function validateInput(input) {
+    console.log('Input value:', input.value);
+}
+&lt;/script&gt;</code></pre>
+        </div>
+        
+        <h3>Method 2: DOM Property Events</h3>
+        <div class="code-block">
+            <pre><code>// Get button element
+var button = document.getElementById('myButton');
+
+// Assign event handler function
+button.onclick = function() {
+    console.log('Button clicked via DOM property');
+};
+
+// Multiple elements with same handler
+var menuItems = document.querySelectorAll('.menu-item');
+for (var i = 0; i &lt; menuItems.length; i++) {
+    menuItems[i].onclick = function() {
+        console.log('Menu item clicked:', this.textContent);
+    };
+}
+
+// Different event types
+var input = document.getElementById('myInput');
+input.onkeyup = function() {
+    console.log('Key released, current value:', this.value);
+};
+
+input.onfocus = function() {
+    console.log('Input gained focus');
+};
+
+input.onblur = function() {
+    console.log('Input lost focus');
+};</code></pre>
+        </div>
+        
+        <h3>Method 3: addEventListener (Best Practice)</h3>
+        <div class="code-block">
+            <pre><code>// Modern event handling
+var button = document.getElementById('myButton');
+
+// Add event listener
+button.addEventListener('click', function() {
+    console.log('Button clicked via addEventListener');
+});
+
+// Named function for easier removal
+function buttonClickHandler() {
+    console.log('Named function handler');
+}
+
+button.addEventListener('click', buttonClickHandler);
+
+// Multiple listeners for same event
+button.addEventListener('click', function() {
+    console.log('First click handler');
+});
+
+button.addEventListener('click', function() {
+    console.log('Second click handler');
+});
+
+// Remove event listener
+button.removeEventListener('click', buttonClickHandler);
+
+// Cross-browser event handling
+function addEvent(element, event, handler) {
+    if (element.addEventListener) {
+        element.addEventListener(event, handler, false);
+    } else if (element.attachEvent) {
+        element.attachEvent('on' + event, handler);
+    } else {
+        element['on' + event] = handler;
+    }
+}
+
+// Usage
+addEvent(button, 'click', function() {
+    console.log('Cross-browser click handler');
+});</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="event-object">
+        <h2>7.1. Understanding Event Object (e) and "this" Keyword</h2>
+        
+        <div class="info-box">
+            <strong>Important Concepts:</strong> The event object (e) contains information about the event, while "this" refers to the element that triggered the event.
+        </div>
+        
+        <h3>Event Object (e) - What is it?</h3>
+        <div class="code-block">
+            <pre><code>// The event object contains detailed information about the event
+button.addEventListener('click', function(e) {
+    console.log('Event object:', e);
+    console.log('Event type:', e.type);           // 'click'
+    console.log('Target element:', e.target);     // Element that was clicked
+    console.log('Current target:', e.currentTarget); // Element with the listener
+    console.log('Mouse X position:', e.clientX);  // Mouse X coordinate
+    console.log('Mouse Y position:', e.clientY);  // Mouse Y coordinate
+    console.log('Which button:', e.button);       // 0=left, 1=middle, 2=right
+});
+
+// For keyboard events
+input.addEventListener('keydown', function(e) {
+    console.log('Key pressed:', e.key);           // Modern property: 'a', 'Enter'
+    console.log('Key code:', e.keyCode);          // Legacy property: 65, 13
+    console.log('Ctrl pressed:', e.ctrlKey);      // Boolean: true/false
+    console.log('Shift pressed:', e.shiftKey);    // Boolean: true/false
+    console.log('Alt pressed:', e.altKey);        // Boolean: true/false
+});</code></pre>
+        </div>
+        
+        <h3>The "this" Keyword in Events</h3>
+        <div class="code-block">
+            <pre><code>// "this" refers to the element that the event listener is attached to
+var buttons = document.querySelectorAll('.btn');
+
+for (var i = 0; i < buttons.length; i++) {
+    buttons[i].addEventListener('click', function() {
+        console.log('This element:', this);           // The clicked button
+        console.log('This element ID:', this.id);     // Button's ID
+        console.log('This element text:', this.textContent); // Button's text
+        
+        // Change the clicked button's style
+        this.style.backgroundColor = 'green';
+        this.style.color = 'white';
+    });
+}</code></pre>
+        </div>
+        
+        <h3>Event Object vs "this" - Key Differences</h3>
+        <div class="code-block">
+            <pre><code>// Example with nested elements
+&lt;div id="parent-div"&gt;
+    &lt;span id="child-span"&gt;Click me&lt;/span&gt;
+&lt;/div&gt;
+
+var parentDiv = document.getElementById('parent-div');
+
+parentDiv.addEventListener('click', function(e) {
+    console.log('e.target:', e.target);           // Element that was actually clicked (span)
+    console.log('this:', this);                   // Element with the listener (div)
+    console.log('e.currentTarget:', e.currentTarget); // Same as "this" (div)
+    
+    // If you click the span:
+    // e.target = span element (what you clicked)
+    // this = div element (where the listener is attached)
+    // e.currentTarget = div element (same as this)
+});</code></pre>
+        </div>
+        
+        <h3>How Event Object and "this" are Passed in Different Methods</h3>
+        
+        <h4>1. HTML Attribute Events</h4>
+        <div class="code-block">
+            <pre><code>&lt;!-- In HTML attributes, you must explicitly pass them --&gt;
+&lt;button onclick="handleClick(event, this)"&gt;Click Me&lt;/button&gt;
+&lt;input type="text" onkeyup="handleKeyup(event, this)"&gt;
+
+&lt;script&gt;
+function handleClick(e, element) {
+    console.log('Event object:', e);        // Event information
+    console.log('This element:', element);  // The button element
+    console.log('Element value:', element.value); // If it's an input
+}
+
+function handleKeyup(e, element) {
+    console.log('Key pressed:', e.key);
+    console.log('Input value:', element.value);
+}
+
+// Alternative - accessing global event object (older browsers)
+function handleClickOld() {
+    var e = event || window.event;  // Get global event object
+    var element = e.target || e.srcElement; // Get target element
+    console.log('Event:', e);
+    console.log('Element:', element);
+}
+&lt;/script&gt;</code></pre>
+        </div>
+        
+        <h4>2. DOM Property Events</h4>
+        <div class="code-block">
+            <pre><code>// Event object is automatically passed as first parameter
+// "this" is automatically set to the element
+button.onclick = function(e) {
+    console.log('Event object:', e);      // Automatically passed
+    console.log('This element:', this);   // Automatically set to button
+    console.log('Same element:', e.currentTarget === this); // true
+};
+
+input.onkeyup = function(e) {
+    console.log('Key pressed:', e.key);
+    console.log('Input value:', this.value); // "this" refers to the input
+};</code></pre>
+        </div>
+        
+        <h4>3. addEventListener Method</h4>
+        <div class="code-block">
+            <pre><code>// Event object is automatically passed as first parameter
+// "this" is automatically set to the element
+button.addEventListener('click', function(e) {
+    console.log('Event object:', e);      // Automatically passed
+    console.log('This element:', this);   // Automatically set to button
+    console.log('Same element:', e.currentTarget === this); // true
+});
+
+input.addEventListener('keyup', function(e) {
+    console.log('Key pressed:', e.key);
+    console.log('Input value:', this.value); // "this" refers to the input
+});</code></pre>
+        </div>
+        
+        <h3>e.target.value vs this.value - Practical Comparison</h3>
+        <div class="code-block">
+            <pre><code>&lt;!-- HTML Structure --&gt;
+&lt;div id="form-container"&gt;
+    &lt;input type="text" id="username" placeholder="Username"&gt;
+    &lt;input type="email" id="email" placeholder="Email"&gt;
+    &lt;input type="password" id="password" placeholder="Password"&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+// Example 1: Direct event on input element
+var usernameInput = document.getElementById('username');
+
+usernameInput.addEventListener('input', function(e) {
+    console.log('e.target.value:', e.target.value);  // Value of the input
+    console.log('this.value:', this.value);          // Same as e.target.value
+    console.log('Are they equal?', e.target.value === this.value); // true
+    
+    // In this case, e.target and this refer to the same element
+});
+
+// Example 2: Event delegation (different story)
+var formContainer = document.getElementById('form-container');
+
+formContainer.addEventListener('input', function(e) {
+    console.log('e.target:', e.target);              // The actual input that was typed in
+    console.log('this:', this);                      // The form container (div)
+    console.log('e.target.value:', e.target.value);  // Value of the input that was typed in
+    console.log('this.value:', this.value);          // undefined (div has no value)
+    
+    // Here e.target and this are DIFFERENT elements!
+    // e.target = the input element that was actually typed in
+    // this = the div container where the listener is attached
+    
+    // Correct way to get input value in delegation:
+    if (e.target.tagName === 'INPUT') {
+        console.log('Input value:', e.target.value);  // Use e.target.value
+        console.log('Input ID:', e.target.id);        // Which input was typed in
+    }
+});
+
+// Example 3: Practical form validation
+function validateInput(e) {
+    var inputValue = e.target.value;  // Always use e.target in delegation
+    var inputType = e.target.type;    // Get input type
+    var inputId = e.target.id;        // Get input ID
+    
+    if (inputType === 'email') {
+        var isValidEmail = inputValue.includes('@');
+        console.log('Email valid:', isValidEmail);
+    }
+    
+    if (inputType === 'password') {
+        var isStrongPassword = inputValue.length >= 8;
+        console.log('Password strong:', isStrongPassword);
+    }
+}
+
+// Apply to all inputs using delegation
+formContainer.addEventListener('input', validateInput);
+&lt;/script&gt;</code></pre>
+        </div>
+        
+        <h3>When to Use e.target.value vs this.value</h3>
+        <div class="code-block">
+            <pre><code>// Rule of thumb:
+
+// 1. Direct event listeners - both work the same
+input.addEventListener('input', function(e) {
+    var value1 = e.target.value;  // ✅ Works
+    var value2 = this.value;      // ✅ Works (same as e.target.value)
+});
+
+// 2. Event delegation - use e.target
+container.addEventListener('input', function(e) {
+    var value1 = e.target.value;  // ✅ Works (gets actual input value)
+    var value2 = this.value;      // ❌ Doesn't work (container has no value)
+});
+
+// 3. HTML attribute events - depends on how you call it
+&lt;input oninput="handleInput(event, this)"&gt;
+
+function handleInput(e, element) {
+    var value1 = e.target.value;  // ✅ Works
+    var value2 = element.value;   // ✅ Works (element is the input)
+    var value3 = this.value;      // ❌ Doesn't work (this refers to window)
+}
+
+// Best practice: Always use e.target in event delegation,
+// use this for direct event listeners</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="event-types">
+        <h2>8. Mouse, Keyboard & Popular Events</h2>
+        
+        <h3>Mouse Events</h3>
+        <div class="code-block">
+            <pre><code>var button = document.getElementById('myButton');
+
+// Mouse click events
+button.addEventListener('click', function(event) {
+    console.log('Single click at:', event.clientX, event.clientY);
+});
+
+button.addEventListener('dblclick', function(event) {
+    console.log('Double click detected');
+});
+
+// Mouse movement events
+button.addEventListener('mouseover', function() {
+    console.log('Mouse entered element');
+    this.style.backgroundColor = 'lightblue';
+});
+
+button.addEventListener('mouseout', function() {
+    console.log('Mouse left element');
+    this.style.backgroundColor = '';
+});
+
+button.addEventListener('mousedown', function(event) {
+    console.log('Mouse button pressed:', event.button); // 0=left, 1=middle, 2=right
+});
+
+button.addEventListener('mouseup', function() {
+    console.log('Mouse button released');
+});
+
+// Mouse movement tracking
+document.addEventListener('mousemove', function(event) {
+    // Uncomment to see mouse coordinates (can be noisy)
+    // console.log('Mouse at:', event.clientX, event.clientY);
+});</code></pre>
+        </div>
+        
+        <h3>Keyboard Events</h3>
+        <div class="code-block">
+            <pre><code>var input = document.getElementById('myInput');
+
+// Keyboard events
+input.addEventListener('keydown', function(event) {
+    console.log('Key pressed:', event.key, 'Code:', event.keyCode);
+    
+    // Check for specific keys
+    if (event.key === 'Enter') {
+        console.log('Enter key pressed');
+    }
+    
+    if (event.key === 'Escape') {
+        console.log('Escape key pressed');
+    }
+});
+
+input.addEventListener('keyup', function(event) {
+    console.log('Key released:', event.key);
+});
+
+input.addEventListener('keypress', function(event) {
+    console.log('Key character:', String.fromCharCode(event.which));
+});
+
+// Global keyboard shortcuts
+document.addEventListener('keydown', function(event) {
+    // Ctrl+S
+    if (event.ctrlKey && event.key === 's') {
+        event.preventDefault(); // Prevent browser save dialog
+        console.log('Save shortcut pressed');
+    }
+    
+    // Alt+H
+    if (event.altKey && event.key === 'h') {
+        console.log('Help shortcut pressed');
+    }
+});</code></pre>
+        </div>
+        
+        <h3>Form Events</h3>
+        <div class="code-block">
+            <pre><code>var form = document.getElementById('myForm');
+var input = document.getElementById('myInput');
+
+// Form submission
+form.addEventListener('submit', function(event) {
+    console.log('Form submitted');
+    
+    // Validate before submission
+    var inputValue = input.value.trim();
+    if (!inputValue) {
+        alert('Please fill in the required field');
+        event.preventDefault(); // Prevent form submission
+        return false;
+    }
+});
+
+// Input events
+input.addEventListener('focus', function() {
+    console.log('Input focused');
+    this.style.borderColor = 'blue';
+});
+
+input.addEventListener('blur', function() {
+    console.log('Input blurred');
+    this.style.borderColor = '';
+});
+
+input.addEventListener('change', function() {
+    console.log('Input value changed to:', this.value);
+});
+
+input.addEventListener('input', function() {
+    console.log('Input value changing:', this.value);
+});</code></pre>
+        </div>
+        
+        <h3>Page Events</h3>
+        <div class="code-block">
+            <pre><code>// Page load events
+window.addEventListener('load', function() {
+    console.log('Page fully loaded (including images)');
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM content loaded (HTML parsed)');
+});
+
+// Page visibility
+window.addEventListener('focus', function() {
+    console.log('Window gained focus');
+});
+
+window.addEventListener('blur', function() {
+    console.log('Window lost focus');
+});
+
+// Resize event
+window.addEventListener('resize', function() {
+    console.log('Window resized to:', window.innerWidth, 'x', window.innerHeight);
+});
+
+// Scroll event
+window.addEventListener('scroll', function() {
+    var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+    console.log('Page scrolled to:', scrollTop);
+});</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="event-registration">
+        <h2>9. Direct vs Delegation Registration</h2>
+        
+        <h3>Direct Event Registration</h3>
+        <div class="code-block">
+            <pre><code>// Direct registration - attach events to specific elements
+var buttons = document.querySelectorAll('.btn');
+
+// Register event on each button individually
+for (var i = 0; i &lt; buttons.length; i++) {
+    buttons[i].addEventListener('click', function() {
+        console.log('Button clicked:', this.textContent);
+        this.style.backgroundColor = 'green';
+    });
+}
+
+// Problem: Events won't work on dynamically added elements
+var newButton = document.createElement('button');
+newButton.textContent = 'Dynamic Button';
+newButton.className = 'btn';
+document.body.appendChild(newButton);
+// This new button won't have the click event!</code></pre>
+        </div>
+        
+        <h3>Event Delegation</h3>
+        <div class="code-block">
+            <pre><code>// Event delegation - attach event to parent element
+var container = document.querySelector('.container');
+
+container.addEventListener('click', function(event) {
+    // Check if clicked element matches our target
+    if (event.target.classList && event.target.classList.contains('btn')) {
+        console.log('Button clicked via delegation:', event.target.textContent);
+        event.target.style.backgroundColor = 'blue';
+    }
+    
+    // Handle menu items
+    if (event.target.classList && event.target.classList.contains('menu-item')) {
+        console.log('Menu item clicked:', event.target.textContent);
+        
+        // Remove active class from all menu items
+        var menuItems = container.querySelectorAll('.menu-item');
+        for (var i = 0; i &lt; menuItems.length; i++) {
+            removeClass(menuItems[i], 'active');
+        }
+        
+        // Add active class to clicked item
+        addClass(event.target, 'active');
+    }
+});
+
+// Now dynamically added elements will also work!
+var dynamicButton = document.createElement('button');
+dynamicButton.textContent = 'Dynamic Button';
+dynamicButton.className = 'btn';
+container.appendChild(dynamicButton);
+// This button will automatically have the click event!</code></pre>
+        </div>
+        
+        <h3>Practical Delegation Example</h3>
+        <div class="code-block">
+            <pre><code>// Delegation for dynamic list
+var listContainer = document.getElementById('dynamic-list');
+
+// Single event listener handles all list items
+listContainer.addEventListener('click', function(event) {
+    var target = event.target;
+    
+    if (target.tagName === 'LI') {
+        console.log('List item clicked:', target.textContent);
+        
+        // Toggle selected state
+        if (hasClass(target, 'selected')) {
+            removeClass(target, 'selected');
+        } else {
+            addClass(target, 'selected');
+        }
+    }
+    
+    // Handle delete buttons
+    if (hasClass(target, 'delete-btn')) {
+        var listItem = target.parentNode;
+        listContainer.removeChild(listItem);
+        console.log('Item deleted');
+    }
+});
+
+// Add items dynamically - they'll automatically have events
+function addListItem(text) {
+    var li = document.createElement('li');
+    li.innerHTML = text + ' &lt;button class="delete-btn"&gt;Delete&lt;/button&gt;';
+    listContainer.appendChild(li);
+}
+
+addListItem('Dynamic Item 1');
+addListItem('Dynamic Item 2');</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="propagation">
+        <h2>10. Event Propagation (Capture & Bubble)</h2>
+        
+        <h3>Understanding Event Flow</h3>
+        <div class="code-block">
+            <pre><code>// Sample HTML structure for propagation
+// &lt;div id="outer"&gt;
+//   &lt;div id="middle"&gt;
+//     &lt;div id="inner"&gt;Click me&lt;/div&gt;
+//   &lt;/div&gt;
+// &lt;/div&gt;
+
+var outer = document.getElementById('outer');
+var middle = document.getElementById('middle');
+var inner = document.getElementById('inner');
+
+// Bubble phase (default) - events bubble up from target to root
+outer.addEventListener('click', function() {
+    console.log('Outer clicked (bubble)');
+});
+
+middle.addEventListener('click', function() {
+    console.log('Middle clicked (bubble)');
+});
+
+inner.addEventListener('click', function() {
+    console.log('Inner clicked (bubble)');
+});
+
+// When you click the inner div, you'll see:
+// "Inner clicked (bubble)"
+// "Middle clicked (bubble)"  
+// "Outer clicked (bubble)"</code></pre>
+        </div>
+        
+        <h3>Capture Phase</h3>
+        <div class="code-block">
+            <pre><code>// Capture phase - events capture down from root to target
+// Third parameter 'true' enables capture phase
+outer.addEventListener('click', function() {
+    console.log('Outer clicked (capture)');
+}, true);
+
+middle.addEventListener('click', function() {
+    console.log('Middle clicked (capture)');
+}, true);
+
+inner.addEventListener('click', function() {
+    console.log('Inner clicked (capture)');
+}, true);
+
+// When you click the inner div with capture, you'll see:
+// "Outer clicked (capture)"
+// "Middle clicked (capture)"
+// "Inner clicked (capture)"
+
+// Complete flow with both capture and bubble:
+// 1. Capture: Outer → Middle → Inner
+// 2. Bubble: Inner → Middle → Outer</code></pre>
+        </div>
+        
+        <h3>Stopping Propagation</h3>
+        <div class="code-block">
+            <pre><code>// Stop event from propagating further
+middle.addEventListener('click', function(event) {
+    console.log('Middle clicked - stopping propagation');
+    event.stopPropagation(); // Stops further propagation
+});
+
+// Now clicking inner will only show:
+// "Inner clicked (bubble)"
+// "Middle clicked - stopping propagation"
+// Outer's handler won't run
+
+// Stop immediate propagation (stops all other handlers on same element)
+inner.addEventListener('click', function(event) {
+    console.log('First handler on inner');
+    event.stopImmediatePropagation();
+});
+
+inner.addEventListener('click', function(event) {
+    console.log('Second handler on inner - this won\'t run');
+});</code></pre>
+        </div>
+        
+        <h3>Event Target vs Current Target</h3>
+        <div class="code-block">
+            <pre><code>// Understanding event targets
+outer.addEventListener('click', function(event) {
+    console.log('Target (what was actually clicked):', event.target.id);
+    console.log('Current target (element with handler):', event.currentTarget.id);
+    
+    // event.target = the element that was actually clicked
+    // event.currentTarget = the element that has the event handler
+});
+
+// Practical example: menu delegation
+var menu = document.querySelector('.menu');
+menu.addEventListener('click', function(event) {
+    if (event.target.classList.contains('menu-item')) {
+        console.log('Clicked menu item:', event.target.textContent);
+        console.log('Event attached to:', event.currentTarget.className);
+        
+        // event.target = the actual menu item clicked
+        // event.currentTarget = the menu container
+    }
+});</code></pre>
+        </div>
+    </div>
+
+    <div class="section" id="cancelling">
+        <h2>11. Event Cancelling</h2>
+        
+        <h3>preventDefault()</h3>
+        <div class="code-block">
+            <pre><code>// Prevent default behavior
+var form = document.getElementById('myForm');
+var link = document.querySelector('a');
+
+// Prevent form submission
+form.addEventListener('submit', function(event) {
+    var input = document.getElementById('myInput');
+    
+    if (!input.value.trim()) {
+        alert('Please fill in the required field');
+        event.preventDefault(); // Prevents form from submitting
+        return false; // Additional safety
+    }
+});
+
+// Prevent link navigation
+link.addEventListener('click', function(event) {
+    console.log('Link clicked but navigation prevented');
+    event.preventDefault(); // Prevents following the link
+});
+
+// Prevent right-click context menu
+document.addEventListener('contextmenu', function(event) {
+    console.log('Right-click disabled');
+    event.preventDefault();
+});</code></pre>
+        </div>
+        
+        <h3>Return False in HTML</h3>
+        <div class="code-block">
+            <pre><code>&lt;!-- HTML attribute event cancelling --&gt;
+&lt;form onsubmit="return validateForm()"&gt;
+    &lt;input type="text" id="username" required&gt;
+    &lt;button type="submit"&gt;Submit&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;a href="http://example.com" onclick="return confirm('Are you sure?')"&gt;
+    Confirm Link
+&lt;/a&gt;
+
+&lt;script&gt;
+function validateForm() {
+    var username = document.getElementById('username').value;
+    
+    if (!username.trim()) {
+        alert('Username is required');
+        return false; // Prevents form submission
+    }
+    
+    return true; // Allows form submission
+}
+&lt;/script&gt;</code></pre>
+        </div>
+        
+        <h3>Comprehensive Event Cancelling</h3>
+        <div class="code-block">
+            <pre><code>// Multiple cancellation techniques
+function handleFormSubmit(event) {
+    var isValid = validateFormData();
+    
+    if (!isValid) {
+        // Method 1: preventDefault
+        event.preventDefault();
+        
+        // Method 2: return false (for older browsers)
+        return false;
+    }
+    
+    // Allow submission if valid
+    return true;
+}
+
+// Disable specific keys
+document.addEventListener('keydown', function(event) {
+    // Disable F12 (Developer Tools)
+    if (event.key === 'F12') {
+        event.preventDefault();
+        console.log('F12 disabled');
+    }
+    
+    // Disable Ctrl+U (View Source)
+    if (event.ctrlKey && event.key === 'u') {
+        event.preventDefault();
+        console.log('View source disabled');
+    }
+    
+    // Disable Ctrl+S (Save Page)
+    if (event.ctrlKey && event.key === 's') {
+        event.preventDefault();
+        console.log('Save page disabled');
+    }
+});
+
+    
+</code></pre>
+        </div>
+        
+        
+    </div>
+
+    
+
+    <div class="section">
+        <h2>Practice Exercises</h2>
+        <p>Try these exercises to master DOM manipulation and events:</p>
+        <ol>
+            <li>Create a dynamic todo list with add/remove functionality</li>
+            <li>Build a simple image gallery with click events</li>
+            <li>Create a form with real-time validation</li>
+            <li>Build a tabbed interface using event delegation</li>
+            <li>Create a drag-and-drop sortable list</li>
+            <li>Build a modal dialog with keyboard navigation</li>
+            <li>Create a responsive navigation menu</li>
+            <li>Build a simple calculator using events</li>
+        </ol>
+        
+        <div class="info">
+            <strong>Next Steps:</strong> Combine DOM manipulation with events to create interactive web applications.
+        </div>
+    </div>
+
+    <script src="dom-events.js"></script>
+</body>
+</html>

@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript ES5/ES6 Lectures Highlights</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: white;
+        }
+
+        .main-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out 0.2s both;
+        }
+
+        .author-info {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeInUp 1s ease-out 0.4s both;
+        }
+
+        .author-info h3 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: #ffd700;
+        }
+
+        .author-info p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .lecture-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            text-decoration: none;
+            color: #333;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            border: 2px solid transparent;
+            animation: fadeInUp 1s ease-out calc(0.6s + var(--delay)) both;
+        }
+
+        .lecture-card:nth-child(1) { --delay: 0.1s; }
+        .lecture-card:nth-child(2) { --delay: 0.2s; }
+        .lecture-card:nth-child(3) { --delay: 0.3s; }
+        .lecture-card:nth-child(4) { --delay: 0.4s; }
+        .lecture-card:nth-child(5) { --delay: 0.5s; }
+        .lecture-card:nth-child(6) { --delay: 0.6s; }
+
+        .lecture-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: left 0.5s;
+        }
+
+        .lecture-card:hover::before {
+            left: 100%;
+        }
+
+        .lecture-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            border-color: #667eea;
+        }
+
+        .card-day {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #667eea;
+            margin-bottom: 1rem;
+            text-align: center;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+            line-height: 1.4;
+            transition: all 0.3s ease;
+        }
+
+        .card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-in-out, opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .lecture-card:hover .card-content {
+            max-height: 300px;
+            opacity: 1;
+        }
+
+        .card-topics {
+            list-style: none;
+            margin-bottom: 1rem;
+        }
+
+        .card-topics li {
+            padding: 0.3rem 0;
+            padding-left: 1.2rem;
+            position: relative;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .card-topics li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .card-difficulty {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-top: 1rem;
+        }
+
+        .difficulty-beginner {
+            background: linear-gradient(45deg, #4CAF50, #8BC34A);
+            color: white;
+        }
+
+        .difficulty-intermediate {
+            background: linear-gradient(45deg, #FF9800, #FFC107);
+            color: white;
+        }
+
+        .difficulty-advanced {
+            background: linear-gradient(45deg, #F44336, #E91E63);
+            color: white;
+        }
+
+        .card-files {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #eee;
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .card-files strong {
+            color: #667eea;
+        }
+
+        .coming-soon {
+            opacity: 0.6;
+            position: relative;
+        }
+
+        .coming-soon::after {
+            content: 'Coming Soon';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(255, 193, 7, 0.9);
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
+        }
+
+        .coming-soon:hover {
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .lecture-card {
+                padding: 1.5rem;
+            }
+            
+            .card-day {
+                font-size: 2rem;
+            }
+            
+            .card-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 4rem;
+            padding: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+            animation: fadeInUp 1s ease-out 1.2s both;
+        }
+
+        .footer p {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .progress-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .lecture-card:target {
+            animation: pulse 0.6s ease-in-out;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-indicator">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="container">
+        <header class="header">
+            <h1 class="main-title">JavaScript ES5/ES6 Lectures Highlights</h1>
+            <p class="subtitle">Client-side technologies course</p>
+
+            <div class="author-info">
+                <h3>ITI - Open Source Department</h3>
+                <p>Eng. Omar Mosleh</p>
+            </div>
+        </header>
+
+        <main class="cards-grid">
+            <a href="JS-day1/index.html" class="lecture-card" id="day1">
+                <div class="card-day">Day 1</div>
+                <div class="card-title">JavaScript ES5 Introduction</div>
+                <div class="card-content">
+                    <ul class="card-topics">
+                        <li>Variables and Data Types</li>
+                        <li>Type Conversion & Casting</li>
+                        <li>Dialog Boxes (alert, confirm, prompt)</li>
+                        <li>NaN and Undefined Handling</li>
+                        <li>Variable Scoping Fundamentals</li>
+                        <li>Basic JavaScript Syntax</li>
+                    </ul>
+                    <span class="card-difficulty difficulty-beginner">Beginner</span>
+                    
+                </div>
+            </a>
+
+            <a href="JS-day2/index.html" class="lecture-card" id="day2">
+                <div class="card-day">Day 2</div>
+                <div class="card-title">Built-in Objects & Data Manipulation</div>
+                <div class="card-content">
+                    <ul class="card-topics">
+                        <li>String Methods & Manipulation</li>
+                        <li>Array Operations & Methods</li>
+                        <li>Date Object & Time Handling</li>
+                        <li>Math Object & Calculations</li>
+                        <li>Type Checking & Validation</li>
+                        <li>Data Processing Techniques</li>
+                    </ul>
+                    <span class="card-difficulty difficulty-beginner">Beginner</span>
+                    
+                </div>
+            </a>
+
+            <a href="JS-day3/index.html" class="lecture-card" id="day3">
+                <div class="card-day">Day 3</div>
+                <div class="card-title">BOM & DOM Fundamentals</div>
+                <div class="card-content">
+                    <ul class="card-topics">
+                        <li>Browser Object Model (BOM)</li>
+                        <li>Window Object & Properties</li>
+                        <li>Document Object Model (DOM)</li>
+                        <li>Element Selection & Traversal</li>
+                        <li>Node Collections & Navigation</li>
+                        <li>Basic DOM Manipulation</li>
+                    </ul>
+                    <span class="card-difficulty difficulty-intermediate">Intermediate</span>
+                    
+                </div>
+            </a>
+
+            <a href="JS-day4/index.html" class="lecture-card" id="day4">
+                <div class="card-day">Day 4</div>
+                <div class="card-title">Advanced DOM & Event Handling</div>
+                <div class="card-content">
+                    <ul class="card-topics">
+                        <li>CSS Selectors & Element Getters</li>
+                        <li>DOM Manipulation & Editing</li>
+                        <li>Styling Properties & Classes</li>
+                        <li>Creating & Inserting Elements</li>
+                        <li>Event Handling Methods</li>
+                        <li>Event Propagation & Delegation</li>
+                        <li>Event Object & "this" Context</li>
+                    </ul>
+                    <span class="card-difficulty difficulty-intermediate">Intermediate</span>
+                    
+                </div>
+            </a>
+
+            <a href="JS-day5/index.html" class="lecture-card" id="day5">
+                <div class="card-day">Day 5</div>
+                <div class="card-title">Functions, Closures & ES6 Features</div>
+                <div class="card-content">
+                    <ul class="card-topics">
+                        <li>Function Types & Hoisting</li>
+                        <li>Closures & Private Variables</li>
+                        <li>IIFE & Module Patterns</li>
+                        <li>Call, Apply, Bind Methods</li>
+                        <li>let, const vs var</li>
+                        <li>Template Literals</li>
+                        <li>Arrow Functions & "this" Context</li>
+                    </ul>
+                    <span class="card-difficulty difficulty-advanced">Advanced</span>
+                    
+                </div>
+            </a>
+
+            <a href="JS-day6/index.html" class="lecture-card" id="day6">
+                <div class="card-day">Day 6</div>
+                <div class="card-title">Objects & Advanced Concepts</div>
+                <div class="card-content">
+                    <ul class="card-topics">
+                        <li>Object Creation & Properties</li>
+                        <li>Object Methods & Prototypes</li>
+                        <li>Constructor Functions</li>
+                        <li>Object-Oriented Patterns</li>
+                        <li>Advanced Object Manipulation</li>
+                        <li>Real-world Applications</li>
+                    </ul>
+                    <span class="card-difficulty difficulty-advanced">Advanced</span>
+                    
+                </div>
+            </a>
+        </main>
+
+        <footer class="footer">
+            <p>2025 ITI Open Source Department - Eng. Omar Mosleh</p>
+        </footer>
+    </div>
+
+    <script>
+        // Smooth scroll progress indicator
+        function updateProgressBar() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        window.addEventListener('scroll', updateProgressBar);
+
+        // Add click animation
+        document.querySelectorAll('.lecture-card').forEach(card => {
+            card.addEventListener('click', function(e) {
+                // Create ripple effect
+                const ripple = document.createElement('div');
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    border-radius: 50%;
+                    background: rgba(102, 126, 234, 0.3);
+                    width: 20px;
+                    height: 20px;
+                    left: ${x - 10}px;
+                    top: ${y - 10}px;
+                    animation: ripple 0.6s ease-out;
+                    pointer-events: none;
+                `;
+                
+                this.style.position = 'relative';
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+        });
+
+        // Add ripple animation style
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                0% {
+                    transform: scale(1);
+                    opacity: 1;
+                }
+                100% {
+                    transform: scale(20);
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Intersection Observer for progressive animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.lecture-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            const cards = document.querySelectorAll('.lecture-card:not(.coming-soon)');
+            const currentIndex = Array.from(cards).findIndex(card => card === document.activeElement);
+            
+            if (e.key === 'ArrowRight' && currentIndex < cards.length - 1) {
+                cards[currentIndex + 1].focus();
+                e.preventDefault();
+            } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                cards[currentIndex - 1].focus();
+                e.preventDefault();
+            } else if (e.key === 'Enter' && document.activeElement.classList.contains('lecture-card')) {
+                document.activeElement.click();
+            }
+        });
+
+        // Add focus styles for keyboard navigation
+        const focusStyle = document.createElement('style');
+        focusStyle.textContent = `
+            .lecture-card:focus {
+                outline: 3px solid #667eea;
+                outline-offset: 2px;
+                transform: translateY(-10px) scale(1.02);
+            }
+        `;
+        document.head.appendChild(focusStyle);
+
+        // Page load animation
+        window.addEventListener('load', function() {
+            document.body.style.overflow = 'hidden';
+            setTimeout(() => {
+                document.body.style.overflow = 'auto';
+            }, 2000);
+        });
+
+        // Add some Easter eggs
+        let clickCount = 0;
+        document.querySelector('.main-title').addEventListener('click', function() {
+            clickCount++;
+            if (clickCount === 5) {
+                this.style.background = 'linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57)';
+                this.style.backgroundSize = '400% 400%';
+                this.style.animation = 'gradient 3s ease infinite';
+                this.style.webkitBackgroundClip = 'text';
+                this.style.webkitTextFillColor = 'transparent';
+                
+                const gradientStyle = document.createElement('style');
+                gradientStyle.textContent = `
+                    @keyframes gradient {
+                        0% { background-position: 0% 50%; }
+                        50% { background-position: 100% 50%; }
+                        100% { background-position: 0% 50%; }
+                    }
+                `;
+                document.head.appendChild(gradientStyle);
+                
+                clickCount = 0;
+            }
+        });
+    </script>
+</body>
+</html>
